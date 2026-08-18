@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "384100376145",
+    "project_id": "girlsfromasia-webapp",
+    "storage_bucket": "girlsfromasia-webapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:384100376145:android:a834bd8239765a5c84e270",
+        "android_client_info": {
+          "package_name": "com.makelovehub.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "384100376145-439qt5r92mo49sejq1ue6p0df32jagls.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKiMqKEbTyJ9H8asckhoO2fLk3jwgBtuI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "384100376145-439qt5r92mo49sejq1ue6p0df32jagls.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
