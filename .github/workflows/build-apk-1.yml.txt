@@ -1,0 +1,185 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Add Android platform (first run only)
+        run: |
+          if [ ! -d "android" ]; then
+            npx cap add android
+          fi
+
+      - name: Generate app icons + splash screen from resources/
+        run: npx @capacitor/assets generate --android
+
+      - name: Sync web assets into Android project
+        run: npx cap sync android
+
+      - name: Add AdMob App ID to AndroidManifest.xml
+        run: |
+          python3 - << 'PYEOF'
+          import re, json
+          manifest_path = "android/app/src/main/AndroidManifest.xml"
+          cfg = json.load(open("capacitor.config.json"))
+          app_id = cfg.get("plugins", {}).get("AdMob", {}).get("appId")
+          if not app_id:
+              raise SystemExit("No AdMob appId found in capacitor.config.json")
+
+          src = open(manifest_path).read()
+          meta = f'\n        <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="{app_id}"/>'
+
+          if "com.google.android.gms.ads.APPLICATION_ID" not in src:
+              # insert right after the opening <application ...> tag
+              src = re.sub(r"(<application[^>]*>)", r"\1" + meta, src, count=1)
+              open(manifest_path, "w").write(src)
+              print("AdMob App ID injected into AndroidManifest.xml")
+          else:
+              print("AdMob App ID already present, skipping")
+          PYEOF
+
+      - name: Place google-services.json
+        run: |
+          if [ -f "google-services.json" ]; then
+            cp google-services.json android/app/google-services.json
+          else
+            echo "WARNING: google-services.json not found at repo root — push notifications will not work until you add it."
+          fi
+
+      - name: Ensure Google Sign-In native dependency is present
+        run: |
+          python3 - << 'PYEOF'
+          p = "android/app/build.gradle"
+          src = open(p).read()
+          dep = "    implementation 'com.google.android.gms:play-services-auth:21.2.0'\n"
+          if "play-services-auth" not in src:
+              # add it inside the existing dependencies { ... } block
+              idx = src.index("dependencies {")
+              insert_at = src.index("\n", idx) + 1
+              src = src[:insert_at] + dep + src[insert_at:]
+              open(p, "w").write(src)
+              print("play-services-auth dependency added")
+          else:
+              print("play-services-auth already present, skipping")
+          PYEOF
+
+      - name: Ensure INTERNET permission is present
+        run: |
+          python3 - << 'PYEOF'
+          p = "android/app/src/main/AndroidManifest.xml"
+          src = open(p).read()
+          perm = '<uses-permission android:name="android.permission.INTERNET" />\n'
+          if "android.permission.INTERNET" not in src:
+              src = src.replace("<manifest", perm + "<manifest", 1) if False else src
+              # insert right after the opening <manifest ...> tag
+              import re
+              src = re.sub(r"(<manifest[^>]*>)", r"\1\n    " + perm.strip(), src, count=1)
+              open(p, "w").write(src)
+              print("INTERNET permission added")
+          else:
+              print("INTERNET permission already present")
+          PYEOF
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x android/gradlew
+
+      - name: Build debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug
+
+      - name: Upload debug APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: make-love-hub-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+      # ─── Signed release build — only runs once you've added the keystore secrets below ───
+      - name: Check for release signing secrets
+        id: relcheck
+        run: |
+          if [ -n "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" ]; then
+            echo "has_keystore=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_keystore=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Decode release keystore
+        if: steps.relcheck.outputs.has_keystore == 'true'
+        run: echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > android/app/release.keystore
+
+      - name: Add release signing config to build.gradle
+        if: steps.relcheck.outputs.has_keystore == 'true'
+        run: |
+          python3 - << 'PYEOF'
+          import re
+          p = "android/app/build.gradle"
+          src = open(p).read()
+
+          signing_block = '''
+              signingConfigs {
+                  release {
+                      storeFile file('release.keystore')
+                      storePassword System.getenv("RELEASE_STORE_PASSWORD")
+                      keyAlias System.getenv("RELEASE_KEY_ALIAS")
+                      keyPassword System.getenv("RELEASE_KEY_PASSWORD")
+                  }
+              }
+          '''
+
+          # IMPORTANT: point buildTypes.release at the signing config BEFORE
+          # inserting the signingConfigs block itself — otherwise this regex
+          # would match the first "release {" it finds, which after insertion
+          # would be signingConfigs.release instead of buildTypes.release.
+          if "signingConfig signingConfigs.release" not in src:
+              src = re.sub(
+                  r"(release\s*\{)",
+                  r"\1\n            signingConfig signingConfigs.release",
+                  src,
+                  count=1
+              )
+
+          # now insert signingConfigs block right before buildTypes {
+          if "signingConfigs {" not in src:
+              src = src.replace("buildTypes {", signing_block + "\n    buildTypes {", 1)
+
+          open(p, "w").write(src)
+          print("build.gradle patched")
+          PYEOF
+
+      - name: Build signed release APK
+        if: steps.relcheck.outputs.has_keystore == 'true'
+        working-directory: android
+        env:
+          RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+        run: ./gradlew assembleRelease
+
+      - name: Upload signed release APK
+        if: steps.relcheck.outputs.has_keystore == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: make-love-hub-release-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
