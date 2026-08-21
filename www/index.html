@@ -1,0 +1,2339 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Make Love Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --w:#FFFFFF;--b:#111118;
+  --g50:#F4F4F8;--g100:#E8E8F0;--g200:#CCCCD8;--g400:#8888A0;--g600:#55556A;
+  --v:#7C3AED;--v-l:#F3EEFF;--v-m:#EDE0FF;--vr:linear-gradient(135deg,#7C3AED,#A855F7);
+  --rose:#F43F5E;--sage:#22C55E;--amber:#F59E0B;
+  --r8:8px;--r12:12px;--r16:16px;--r24:24px;--rF:9999px;
+  --sh-xs:0 1px 3px rgba(17,17,24,.06);--sh-sm:0 4px 12px rgba(17,17,24,.08);--sh-md:0 8px 28px rgba(17,17,24,.12);--sh-lg:0 20px 60px rgba(17,17,24,.18);
+  --spring:cubic-bezier(.34,1.56,.64,1);--ease:.22s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--b)}
+body{position:fixed;inset:0;display:flex;flex-direction:column;font-family:'Inter',sans-serif;color:var(--b)}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+input,textarea,select{font-family:inherit;outline:none;color:var(--b)}
+img{display:block}
+
+/* ════════ SPLASH ════════ */
+#splash{position:fixed;inset:0;z-index:9000;background:var(--b);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s,transform .6s}
+#splash.gone{opacity:0;transform:scale(1.08);pointer-events:none}
+.sp-ring{position:relative;width:88px;height:88px;margin-bottom:24px}
+.sp-ring::before{content:'';position:absolute;inset:-6px;border-radius:50%;background:conic-gradient(from 0deg,#7C3AED,#A855F7,#7C3AED);animation:spin 3s linear infinite;opacity:.3}
+.sp-circle{position:relative;z-index:1;width:88px;height:88px;border-radius:50%;background:var(--vr);display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 0 40px rgba(124,58,237,.5)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes ripple{0%{box-shadow:0 0 0 0 rgba(124,58,237,.4)}70%{box-shadow:0 0 0 24px rgba(124,58,237,0)}100%{box-shadow:0 0 0 0 rgba(124,58,237,0)}}
+.sp-wordmark{font-family:'Bricolage Grotesque',sans-serif;font-size:36px;font-weight:800;color:var(--w);letter-spacing:-1.5px}
+.sp-sub{margin-top:6px;font-size:12px;color:var(--g400);letter-spacing:2px;text-transform:uppercase}
+.sp-bar{margin-top:44px;width:130px;height:2px;border-radius:2px;background:rgba(255,255,255,.08);overflow:hidden}
+.sp-fill{height:100%;width:0;background:var(--vr);animation:barFill 1.6s ease-out forwards}
+@keyframes barFill{to{width:100%}}
+
+/* ════════ AUTH ════════ */
+#authPage{display:none;flex-direction:column;position:fixed;inset:0;z-index:200;background:var(--b);overflow-y:auto;-webkit-overflow-scrolling:touch}
+#authPage.on{display:flex}
+.auth-bg{position:fixed;inset:0;overflow:hidden;z-index:0}
+.auth-bg-grad{position:absolute;inset:0;background:radial-gradient(ellipse 90% 70% at 15% 15%,rgba(124,58,237,.65),transparent 55%),radial-gradient(ellipse 60% 60% at 85% 75%,rgba(168,85,247,.35),transparent 50%),radial-gradient(ellipse 40% 40% at 50% 50%,rgba(244,63,94,.12),transparent 60%),var(--b);animation:bgPulse 8s ease-in-out infinite alternate}
+@keyframes bgPulse{0%{filter:hue-rotate(0deg) brightness(1)}100%{filter:hue-rotate(15deg) brightness(1.1)}}
+.auth-orb{position:absolute;border-radius:50%;filter:blur(60px);animation:orbFloat var(--dur,8s) ease-in-out infinite var(--delay,0s) alternate}
+@keyframes orbFloat{0%{transform:translate(0,0) scale(1)}100%{transform:translate(var(--tx,20px),var(--ty,-30px)) scale(1.15)}}
+.auth-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(124,58,237,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,.06) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%)}
+.auth-top{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:0 28px 40px}
+.auth-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:var(--rF);background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.35);backdrop-filter:blur(10px);margin-bottom:20px;width:fit-content}
+.auth-badge-dot{width:7px;height:7px;border-radius:50%;background:var(--sage);animation:pulse2 2s ease-in-out infinite}
+@keyframes pulse2{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.auth-badge-txt{font-size:11px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.8px}
+.auth-headline{font-family:'Bricolage Grotesque',sans-serif;font-size:52px;font-weight:800;line-height:.92;letter-spacing:-2.5px;color:var(--w)}
+.auth-headline em{font-style:normal;background:linear-gradient(135deg,#A855F7,#EC4899,#F59E0B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.auth-desc{margin-top:16px;font-size:15px;color:rgba(255,255,255,.4);line-height:1.65;max-width:280px}
+.auth-proof{display:flex;align-items:center;gap:10px;margin-top:24px}
+.auth-avatars{display:flex}
+.auth-av{width:30px;height:30px;border-radius:50%;background:var(--vr);border:2px solid var(--b);font-size:14px;display:flex;align-items:center;justify-content:center;margin-right:-8px}
+.auth-av:first-child{margin-right:0}
+.auth-proof-txt{font-size:12px;color:rgba(255,255,255,.5)}
+.auth-proof-txt strong{color:rgba(255,255,255,.85);font-weight:700}
+.auth-bottom{position:relative;z-index:1;flex-shrink:0;background:rgba(255,255,255,.05);backdrop-filter:blur(30px);border-top:1px solid rgba(255,255,255,.08);padding:28px 22px max(env(safe-area-inset-bottom,24px),24px)}
+.auth-app-row{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.auth-app-icon{width:40px;height:40px;border-radius:var(--r12);background:var(--vr);display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 14px rgba(124,58,237,.5)}
+.auth-app-name{font-family:'Bricolage Grotesque',sans-serif;font-size:17px;font-weight:800;color:var(--w);letter-spacing:-.5px}
+.auth-app-tagline{font-size:11px;color:rgba(255,255,255,.4);margin-top:1px}
+.g-btn{width:100%;padding:17px 20px;border-radius:var(--r16);background:var(--w);color:var(--b);font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 8px 28px rgba(0,0,0,.4);transition:transform var(--ease),opacity var(--ease);letter-spacing:-.2px}
+.g-btn:disabled,#signupBtn:disabled{opacity:.4;box-shadow:none;cursor:not-allowed}
+.g-btn:active{transform:scale(.97);opacity:.9}
+.auth-input{width:100%;padding:15px 16px;margin-bottom:12px;border-radius:var(--r16);background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);color:#fff;font-size:16px}
+.auth-input::placeholder{color:rgba(255,255,255,.4)}
+.auth-input:focus{border-color:var(--v)}
+
+/* ════════ TERMS OF USE ════════ */
+#termsPage{display:none;flex-direction:column;position:fixed;inset:0;z-index:250;background:var(--b)}
+#termsPage.on{display:flex}
+.terms-close{position:fixed;top:max(env(safe-area-inset-top,14px),14px);right:14px;z-index:10;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:18px;display:none;align-items:center;justify-content:center}
+.terms-close.on{display:flex}
+.terms-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:max(env(safe-area-inset-top,24px),24px) 22px 20px}
+.terms-h{font-family:'Bricolage Grotesque',sans-serif;font-size:28px;font-weight:800;color:var(--w);letter-spacing:-.8px;margin-bottom:8px}
+.terms-h2{font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:800;color:var(--w);margin:20px 0 6px}
+.terms-p{font-size:14px;color:rgba(255,255,255,.55);line-height:1.7}
+.terms-bottom{flex-shrink:0;background:rgba(255,255,255,.05);backdrop-filter:blur(30px);border-top:1px solid rgba(255,255,255,.08);padding:16px 22px max(env(safe-area-inset-bottom,20px),20px)}
+.terms-check{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;cursor:pointer}
+.terms-check input{width:20px;height:20px;flex-shrink:0;margin-top:1px;accent-color:var(--v)}
+.terms-check span{font-size:13px;color:rgba(255,255,255,.7);line-height:1.5}
+#termsAgreeBtn:disabled{opacity:.35;box-shadow:none}
+.auth-sep{display:flex;align-items:center;gap:10px;margin:14px 0}
+.auth-sep::before,.auth-sep::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08)}
+.auth-sep-txt{font-size:11px;color:rgba(255,255,255,.3);font-weight:600}
+.auth-terms{font-size:11px;color:rgba(255,255,255,.25);text-align:center;line-height:1.8;margin-top:14px}
+.auth-terms a{color:rgba(124,58,237,.8)}
+
+/* ════════ APP SHELL ════════ */
+#app{display:none;flex-direction:column;height:100%}
+#app.on{display:flex}
+.topbar{flex-shrink:0;background:var(--w);border-bottom:1px solid var(--g100);padding:11px 16px 10px;display:flex;align-items:center;justify-content:space-between;z-index:10}
+.tb-logo{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;letter-spacing:-1px;color:var(--b)}
+.tb-logo em{font-style:normal;color:var(--v)}
+.tb-actions{display:flex;align-items:center;gap:7px}
+.tb-btn{width:36px;height:36px;border-radius:50%;background:var(--g50);border:1px solid var(--g100);display:flex;align-items:center;justify-content:center;font-size:16px;position:relative;transition:background var(--ease)}
+.tb-btn:active{background:var(--g100)}
+.tb-dot{position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:50%;background:var(--rose);border:2px solid var(--w);display:none}
+.tb-dot.on{display:block}
+.bnav{flex-shrink:0;background:var(--w);border-top:1px solid var(--g100);display:flex;padding:8px 0 max(env(safe-area-inset-bottom,0px),10px)}
+.bn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:none;color:var(--g400);font-size:10px;font-weight:700;letter-spacing:.3px;padding:3px 0;position:relative;transition:color var(--ease)}
+.bn.on{color:var(--v)}
+.bn-ico{font-size:21px;line-height:1}
+.bn-line{position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:20px;height:3px;border-radius:0 0 3px 3px;background:var(--v);opacity:0;transition:opacity var(--ease)}
+.bn.on .bn-line{opacity:1}
+.screens{flex:1;overflow:hidden;position:relative}
+.scr{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;opacity:0;pointer-events:none;transform:translateY(5px);transition:opacity .2s,transform .2s;background:var(--g50)}
+.scr.on{opacity:1;pointer-events:auto;transform:none}
+
+/* ════════ DISCOVER ════════ */
+#scrDiscover{padding-bottom:20px}
+.disc-head{padding:14px 14px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5;background:var(--g50)}
+.disc-title{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;letter-spacing:-1px}
+.disc-title span{color:var(--v)}
+.flt-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--rF);background:var(--w);border:1.5px solid var(--g100);font-size:13px;font-weight:600;color:var(--g600);box-shadow:var(--sh-xs)}
+.flt-btn:active{border-color:var(--v)}
+.page-bar{display:flex;align-items:center;justify-content:space-between;padding:0 14px 10px}
+.page-info{font-size:12px;color:var(--g400);font-weight:600}
+.page-count{font-size:12px;color:var(--v);font-weight:700}
+.ugrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 12px}
+.ucard{border-radius:var(--r16);overflow:hidden;background:var(--w);box-shadow:var(--sh-sm);cursor:pointer;position:relative;transition:transform .18s var(--spring),box-shadow .18s;display:flex;flex-direction:column}
+.ucard:active{transform:scale(.97);box-shadow:none}
+.ucard-img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;background:var(--g100)}
+.ucard-ph{width:100%;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;font-size:52px}
+.ph-f{background:linear-gradient(160deg,var(--v-m),var(--v-l))}
+.ph-m{background:linear-gradient(160deg,#CCFBF1,#E0F7F5)}
+.ucard-grad{position:absolute;top:0;left:0;right:0;aspect-ratio:3/4;background:linear-gradient(to top,rgba(17,17,24,.85) 0%,rgba(17,17,24,.05) 50%,transparent 70%);pointer-events:none}
+.ucard-info{position:absolute;bottom:0;left:0;right:0;padding:10px;pointer-events:none}
+.ucard-name{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:800;color:var(--w);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 4px rgba(0,0,0,.4)}
+.ucard-age{font-size:11px;color:rgba(255,255,255,.7);margin-top:1px}
+.ucard-msg{position:absolute;bottom:8px;right:8px;width:30px;height:30px;border-radius:50%;background:rgba(124,58,237,.9);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 2px 10px rgba(124,58,237,.5);pointer-events:auto;transition:transform .15s}
+.ucard-msg:active{transform:scale(.88)}
+.ucard-new{position:absolute;top:8px;left:8px;padding:3px 8px;border-radius:var(--rF);background:var(--vr);color:var(--w);font-size:9px;font-weight:700}
+.ucard-online{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--sage);border:1.5px solid var(--w)}
+.pagination{display:flex;align-items:center;justify-content:center;gap:8px;padding:20px 14px 4px}
+.pg-btn{width:38px;height:38px;border-radius:50%;background:var(--w);border:1.5px solid var(--g100);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--g600);font-weight:700;box-shadow:var(--sh-xs);transition:transform .15s}
+.pg-btn:active{transform:scale(.92)}
+.pg-btn.on{background:var(--vr);border-color:transparent;color:var(--w);box-shadow:0 4px 14px rgba(124,58,237,.35)}
+.pg-btn:disabled{opacity:.3;cursor:not-allowed}
+.pg-dots{font-size:13px;color:var(--g400);font-weight:700;padding:0 4px}
+.sk{background:linear-gradient(90deg,var(--g100) 25%,var(--g50) 50%,var(--g100) 75%);background-size:200% 100%;animation:shim 1.3s infinite;border-radius:var(--r16)}
+@keyframes shim{to{background-position:-200% 0}}
+.empty-grid{grid-column:1/-1;padding:50px 20px;text-align:center}
+.empty-ico{font-size:48px;margin-bottom:14px}
+.empty-h{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;margin-bottom:8px}
+.empty-p{font-size:14px;color:var(--g400);line-height:1.6}
+
+/* ════════ CHATS ════════ */
+#scrChats{background:var(--g50);padding:0 0 100px}
+.chats-head{padding:16px 16px 12px;background:var(--w);border-bottom:1px solid var(--g100);position:sticky;top:0;z-index:5}
+.chats-title{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;letter-spacing:-1px}
+.conv{display:flex;align-items:center;gap:12px;background:var(--w);border-radius:var(--r16);padding:13px 14px;margin:0 12px 8px;cursor:pointer;box-shadow:var(--sh-xs);transition:transform .15s}
+.conv:active{transform:scale(.99)}
+.conv-ava{width:50px;height:50px;border-radius:50%;flex-shrink:0;background:var(--g100);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:22px;position:relative}
+.conv-ava img{width:100%;height:100%;object-fit:cover}
+.conv-on{position:absolute;bottom:1px;right:1px;width:11px;height:11px;border-radius:50%;background:var(--sage);border:2px solid var(--w)}
+.conv-info{flex:1;min-width:0}
+.conv-name{font-size:17px;font-weight:700}
+.conv-prev{font-size:14px;color:var(--g400);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conv-time{font-size:11px;color:var(--g400);flex-shrink:0}
+
+/* ════════ MY PROFILE SCREEN ════════ */
+#scrProfile{background:var(--g50);padding:0 0 100px}
+.my-hero{position:relative;height:300px;overflow:hidden;background:var(--b);display:flex;align-items:flex-end}
+.my-hero-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;background:var(--b)}
+.my-hero-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:100px;background:radial-gradient(ellipse 80% 80% at 30% 30%,rgba(124,58,237,.6),transparent 55%),var(--b);animation:bgPulse 10s ease-in-out infinite alternate}
+.my-hero-grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(17,17,24,.95) 0%,rgba(17,17,24,.3) 50%,rgba(17,17,24,.1) 100%)}
+.my-hero-info{position:relative;z-index:1;width:100%;padding:0 18px 20px}
+.my-hero-name{font-family:'Bricolage Grotesque',sans-serif;font-size:28px;font-weight:800;color:var(--w);letter-spacing:-.8px;text-shadow:0 2px 8px rgba(0,0,0,.4)}
+.my-hero-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.my-hero-chip{padding:4px 12px;border-radius:var(--rF);font-size:11px;font-weight:700;backdrop-filter:blur(10px)}
+.chip-age{background:rgba(124,58,237,.75);color:var(--w)}
+.chip-gender{background:rgba(255,255,255,.15);color:rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.2)}
+.chip-country{background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.15)}
+.my-edit-fab{position:absolute;top:14px;right:14px;z-index:2;display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--rF);background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);font-size:12px;font-weight:700;color:var(--w);transition:background var(--ease)}
+.my-edit-fab:active{background:rgba(255,255,255,.2)}
+.my-body{padding:16px 16px 16px}
+.my-bio-card{background:var(--w);border-radius:var(--r16);padding:16px;margin-bottom:12px;box-shadow:var(--sh-sm)}
+.my-bio-lbl{font-size:10px;font-weight:700;color:var(--g400);letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px}
+.my-bio-txt{font-size:16px;color:var(--g600);line-height:1.7}
+.my-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.my-tag{padding:5px 12px;border-radius:var(--rF);background:var(--g50);border:1px solid var(--g100);font-size:12px;font-weight:600;color:var(--g600)}
+.stats-card{display:flex;background:var(--w);border-radius:var(--r16);overflow:hidden;margin-bottom:12px;box-shadow:var(--sh-sm)}
+.sc-stat{flex:1;padding:16px 8px;text-align:center;border-right:1px solid var(--g100)}
+.sc-stat:last-child{border-right:none}
+.sc-n{font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;color:var(--v)}
+.sc-l{font-size:11px;color:var(--g400);margin-top:2px}
+.sett-lbl{font-size:10px;font-weight:700;color:var(--g400);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;padding-top:4px}
+.sett-card{background:var(--w);border-radius:var(--r16);overflow:hidden;margin-bottom:10px;box-shadow:var(--sh-sm)}
+.srow{display:flex;align-items:center;gap:12px;padding:14px 15px;cursor:pointer;border-bottom:1px solid var(--g50);transition:background var(--ease)}
+.srow:last-child{border-bottom:none}
+.srow:active{background:var(--g50)}
+.srow-ico{width:34px;height:34px;border-radius:var(--r8);background:var(--g50);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.srow-lbl{flex:1;font-size:15px;font-weight:500}
+.srow-arr{color:var(--g200);font-size:18px}
+
+/* ════════ PROFILE SHEET — FULLSCREEN ════════ */
+#profSheet{display:none;position:fixed;inset:0;z-index:300;background:var(--b)}
+#profSheet.on{display:block}
+.ps-scroll{height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--b)}
+.ps-photo-zone{position:relative;width:100%;aspect-ratio:3/4;max-height:520px;flex-shrink:0;overflow:hidden;background:var(--b)}
+.ps-photo-img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.ps-photo-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:110px}
+.ps-photo-fade{position:absolute;bottom:0;left:0;right:0;height:180px;background:linear-gradient(to top,var(--b) 0%,transparent 100%);pointer-events:none}
+.ps-photo-dots{position:absolute;top:14px;left:14px;right:14px;display:flex;gap:5px;z-index:2}
+.ps-photo-dots span{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.3);overflow:hidden}
+.ps-photo-dots span i{display:block;height:100%;width:0;background:#fff;transition:width .15s}
+.ps-photo-dots span.on i{width:100%}
+.ps-photo-tap{position:absolute;top:0;bottom:0;width:40%;z-index:1}
+.ps-photo-tap.left{left:0}
+.ps-photo-tap.right{right:0}
+.ps-photo-name{position:absolute;bottom:20px;right:0;left:0;padding:0 20px;z-index:1}
+.ps-ph-name{font-family:'Bricolage Grotesque',sans-serif;font-size:32px;font-weight:800;color:var(--w);letter-spacing:-.8px;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.ps-ph-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ps-ph-chip{padding:4px 12px;border-radius:var(--rF);font-size:11px;font-weight:700}
+.ps-close{position:fixed;top:max(env(safe-area-inset-top,14px),14px);left:14px;z-index:10;width:36px;height:36px;border-radius:50%;background:rgba(17,17,24,.5);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);color:var(--w);font-size:18px;display:flex;align-items:center;justify-content:center}
+.ps-more{position:fixed;top:max(env(safe-area-inset-top,14px),14px);right:14px;z-index:10;width:36px;height:36px;border-radius:50%;background:rgba(17,17,24,.5);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);color:var(--w);font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.ps-info{background:var(--b);padding:16px 20px max(env(safe-area-inset-bottom,80px),80px)}
+.ps-meta-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.ps-chip{padding:6px 14px;border-radius:var(--rF);font-size:12px;font-weight:700}
+.ps-chip-v{background:rgba(124,58,237,.25);color:#C4B5FD;border:1px solid rgba(124,58,237,.3)}
+.ps-chip-w{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.1)}
+.ps-bio-txt{font-size:15px;color:rgba(255,255,255,.55);line-height:1.75;margin-bottom:18px}
+.ps-section-lbl{font-size:10px;font-weight:700;color:rgba(255,255,255,.25);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.ps-tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:22px}
+.ps-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:22px}
+.ps-detail-item{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:var(--r12);padding:9px 12px}
+.ps-detail-lbl{font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.3px;margin-bottom:3px}
+.ps-detail-val{font-size:13px;font-weight:600;color:rgba(255,255,255,.85)}
+.ps-tag{padding:6px 14px;border-radius:var(--rF);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);font-size:12px;font-weight:600;color:rgba(255,255,255,.6)}
+.ps-action-bar{position:fixed;bottom:0;left:0;right:0;z-index:10;padding:12px 20px max(env(safe-area-inset-bottom,16px),16px);background:linear-gradient(to top,rgba(17,17,24,1) 60%,transparent 100%)}
+.ps-msg-btn{width:100%;padding:17px;border-radius:var(--r16);background:var(--vr);color:var(--w);font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 24px rgba(124,58,237,.45);transition:transform .15s,opacity .15s;letter-spacing:-.2px}
+.ps-msg-btn:active{transform:scale(.97);opacity:.9}
+
+/* ════════ CHAT WINDOW ════════ */
+#chatWin{display:none;position:fixed;inset:0;z-index:400;flex-direction:column;background:var(--g50)}
+#chatWin.on{display:flex}
+.cw-hdr{background:var(--w);padding:12px 14px;border-bottom:1px solid var(--g100);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.cw-back{width:34px;height:34px;border-radius:50%;background:var(--g50);border:1px solid var(--g100);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--b)}
+.cw-ava{width:42px;height:42px;border-radius:50%;background:var(--g100);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px;position:relative}
+.cw-ava img{width:100%;height:100%;object-fit:cover}
+.cw-ondot{position:absolute;bottom:0;right:0;width:11px;height:11px;border-radius:50%;background:var(--sage);border:2px solid var(--w)}
+.cw-inf{flex:1}
+.cw-name{font-size:16px;font-weight:700}
+.cw-status{font-size:12px;color:var(--sage)}
+.cw-prof-btn{padding:7px 13px;border-radius:var(--rF);background:var(--v-l);border:1px solid rgba(124,58,237,.15);font-size:12px;font-weight:700;color:var(--v)}
+.cw-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px;-webkit-overflow-scrolling:touch}
+.bbl{max-width:78%;padding:12px 15px;border-radius:16px;font-size:16px;line-height:1.55;word-break:break-word}
+.bbl-me{align-self:flex-end;background:var(--vr);color:var(--w);border-bottom-right-radius:4px}
+.bbl-them{align-self:flex-start;background:var(--w);color:var(--b);border:1px solid var(--g100);border-bottom-left-radius:4px;box-shadow:var(--sh-xs)}
+.bbl-time{font-size:10px;color:var(--g400);margin-top:2px}
+.cw-inp{background:var(--w);border-top:1px solid var(--g100);padding:10px 14px;padding-bottom:max(env(safe-area-inset-bottom,0px),10px);display:flex;align-items:flex-end;gap:8px;flex-shrink:0}
+.cw-ta{flex:1;background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r16);padding:11px 14px;font-size:16px;resize:none;max-height:90px;line-height:1.5;transition:border-color var(--ease)}
+.cw-ta:focus{border-color:var(--v)}
+.cw-ta::placeholder{color:var(--g400)}
+.cw-send{width:42px;height:42px;border-radius:50%;flex-shrink:0;background:var(--vr);color:var(--w);font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(124,58,237,.4);transition:transform .15s}
+.cw-send:active{transform:scale(.88)}
+
+/* ════════ OVERLAYS ════════ */
+.ov{display:none;position:fixed;inset:0;z-index:500;background:rgba(17,17,24,.7);backdrop-filter:blur(6px);align-items:flex-end;justify-content:center}
+.ov.on{display:flex}
+.sheet{background:var(--w);border-radius:var(--r24) var(--r24) 0 0;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;padding:0 18px 44px;animation:slideUp .3s var(--spring)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
+.sh-pill{width:40px;height:4px;border-radius:2px;background:var(--g100);margin:12px auto 20px}
+.sh-h{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px}
+.sh-s{font-size:13px;color:var(--g400);margin-bottom:20px}
+.flbl{font-size:12px;font-weight:700;color:var(--g600);letter-spacing:.3px;margin-bottom:6px;display:block}
+.finp{width:100%;padding:14px 14px;margin-bottom:13px;background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r12);font-size:16px;transition:border-color var(--ease)}
+.finp:focus{border-color:var(--v);background:var(--w)}
+.finp::placeholder{color:var(--g200)}
+.fta{width:100%;padding:14px 14px;margin-bottom:13px;background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r12);font-size:16px;resize:none;min-height:80px;line-height:1.6;transition:border-color var(--ease)}
+.fta:focus{border-color:var(--v);background:var(--w)}
+.fsel{width:100%;padding:14px 14px;margin-bottom:13px;background:var(--g50);border:1.5px solid var(--g100);border-radius:var(--r12);font-size:16px;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238888A0' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;transition:border-color var(--ease)}
+.fsel:focus{border-color:var(--v)}
+.locked-field{width:100%;padding:12px 14px;margin-bottom:13px;background:var(--g100);border:1.5px solid var(--g100);border-radius:var(--r12);font-size:15px;color:var(--g400);cursor:not-allowed;display:flex;align-items:center;justify-content:space-between}
+.gpair{display:flex;gap:8px;margin-bottom:13px}
+.gopt{flex:1;padding:13px;border-radius:var(--r12);border:1.5px solid var(--g100);background:var(--g50);text-align:center;font-size:14px;font-weight:700;color:var(--g400);cursor:pointer;transition:.18s}
+.gopt.on{border-color:var(--v);color:var(--v);background:var(--v-l)}
+.pic-btn{width:84px;height:84px;border-radius:50%;background:var(--g50);border:2px dashed var(--g200);margin:0 auto 16px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;color:var(--g400);overflow:hidden;position:relative}
+.pic-btn img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:6px}
+.photo-slot{position:relative;aspect-ratio:3/4;border-radius:var(--r16);overflow:hidden;background:var(--g50)}
+.photo-slot img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-slot .ph-main-tag{position:absolute;bottom:0;left:0;right:0;background:rgba(124,58,237,.88);color:#fff;font-size:10px;font-weight:800;padding:6px 0;text-align:center}
+.photo-slot .ph-status{position:absolute;top:5px;left:5px;font-size:9px;font-weight:700;padding:2px 6px;border-radius:var(--rF);color:#fff}
+.photo-slot .ph-status.pending{background:#F59E0B}
+.photo-slot .ph-status.approved{background:#10B981}
+.photo-slot .ph-set-main{position:absolute;bottom:0;left:0;right:0;background:rgba(17,17,24,.72);color:#fff;font-size:9.5px;font-weight:800;padding:6px 2px;text-align:center;border:none;line-height:1.3}
+.photo-slot .ph-rm{position:absolute;top:5px;right:5px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;border:none}
+.photo-slot.add-slot{border:2px dashed var(--g200);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--g400);font-size:11px;cursor:pointer}
+.photo-hint{font-size:11px;color:var(--g400);text-align:center;margin-bottom:16px}
+.photo-warn{background:#FEF2F2;border:1px solid #FECACA;color:#B91C1C;font-size:12px;line-height:1.6;border-radius:var(--r12);padding:10px 12px;margin-bottom:12px}
+.photo-explain{background:var(--v-l);border:1px solid rgba(124,58,237,.15);color:var(--v);font-size:12px;line-height:1.6;border-radius:var(--r12);padding:10px 12px;margin-bottom:12px}
+.photo-status-pending{background:#FFFBEB;border:1px solid #FDE68A;color:#92400E;font-size:12px;font-weight:700;border-radius:var(--r12);padding:9px 12px;margin-bottom:12px;text-align:center}
+.photo-status-rejected{background:#FEF2F2;border:1px solid #FECACA;color:#B91C1C;font-size:12px;font-weight:700;border-radius:var(--r12);padding:9px 12px;margin-bottom:12px;text-align:center}
+/* ════════ ADMIN PANEL ════════ */
+.admin-stats{display:flex;gap:10px;margin-bottom:16px}
+.admin-stat{flex:1;background:var(--g50);border-radius:var(--r16);padding:12px;text-align:center}
+.admin-stat-n{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;color:var(--v)}
+.admin-stat-l{font-size:10px;color:var(--g400);font-weight:700;letter-spacing:.3px;text-transform:uppercase;margin-top:2px}
+.admin-tabs{display:flex;gap:8px;margin-bottom:14px}
+.admin-tab{flex:1;text-align:center;padding:9px;border-radius:var(--rF);font-size:12px;font-weight:700;background:var(--g50);color:var(--g600);cursor:pointer}
+.admin-tab.on{background:var(--v);color:#fff}
+.admin-urow{display:flex;align-items:center;gap:12px;padding:11px 4px;border-bottom:1px solid var(--g50);cursor:pointer}
+.admin-urow:last-child{border-bottom:none}
+.admin-uava{width:48px;height:48px;border-radius:50%;object-fit:cover;background:var(--g100);flex-shrink:0}
+.admin-uinfo{flex:1;min-width:0}
+.admin-uname{font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px}
+.admin-uemail{font-size:11px;color:var(--g400);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.admin-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:var(--rF);color:#fff}
+.admin-badge.new{background:#10B981}
+.admin-badge.newphoto{background:#F59E0B}
+.admin-photos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
+.admin-photo-cell{position:relative;aspect-ratio:3/4;border-radius:var(--r12);overflow:hidden;background:var(--g50)}
+.admin-photo-cell img{width:100%;height:100%;object-fit:cover;display:block}
+.admin-photo-cell .ph-status{position:absolute;top:5px;left:5px;font-size:9px;font-weight:700;padding:2px 6px;border-radius:var(--rF);color:#fff}
+.admin-photo-cell .ph-status.pending{background:#F59E0B}
+.admin-photo-cell .ph-status.approved{background:#10B981}
+.admin-photo-actions{position:absolute;bottom:0;left:0;right:0;display:flex}
+.admin-photo-actions button{flex:1;border:none;padding:7px 0;font-size:14px;color:#fff}
+.admin-photo-actions .ap-approve{background:rgba(16,185,129,.92)}
+.admin-photo-actions .ap-reject{background:rgba(239,68,68,.92)}
+.admin-del-btn{width:100%;padding:15px;border-radius:var(--r16);background:#EF4444;color:#fff;font-size:15px;font-weight:800;margin-top:6px}
+/* ════════ USER-LEVEL REPORT / BLOCK ════════ */
+.ua-btn{width:100%;display:flex;align-items:center;gap:12px;padding:15px 6px;font-size:15px;font-weight:600;border-bottom:1px solid var(--g50);text-align:left}
+.ua-btn:last-child{border-bottom:none}
+.ua-btn.danger{color:#EF4444}
+.reason-opt{display:flex;align-items:center;gap:10px;padding:13px 12px;border-radius:var(--r12);border:1.5px solid var(--g100);margin-bottom:8px;cursor:pointer;font-size:14px;font-weight:600}
+.reason-opt.on{border-color:var(--v);background:var(--v-l);color:var(--v)}
+.reason-opt input{accent-color:var(--v)}
+.itags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.itag{padding:7px 13px;border-radius:var(--rF);background:var(--g50);border:1.5px solid var(--g100);font-size:12px;font-weight:600;color:var(--g400);cursor:pointer;transition:.18s}
+.itag.on{background:var(--v-l);border-color:var(--v);color:var(--v)}
+.btn-p{width:100%;padding:15px;border:none;border-radius:var(--r16);background:var(--vr);color:var(--w);font-size:16px;font-weight:700;box-shadow:0 5px 18px rgba(124,58,237,.32);transition:transform .15s,opacity .15s}
+.btn-p:active{transform:scale(.97);opacity:.9}
+.btn-p:disabled{background:var(--g100);box-shadow:none;cursor:not-allowed;color:var(--g400)}
+.btn-s{width:100%;padding:13px;border:1.5px solid var(--g100);border-radius:var(--r16);background:transparent;color:var(--b);font-size:15px;font-weight:600;margin-top:8px}
+.btn-s:active{border-color:var(--v)}
+.btn-d{width:100%;padding:11px;border:1.5px solid rgba(244,63,94,.2);border-radius:var(--r12);background:rgba(244,63,94,.05);color:var(--rose);font-size:14px;font-weight:700;margin-top:6px}
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;border-radius:2px;background:var(--g100);outline:none;margin:8px 0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--v);cursor:pointer;box-shadow:0 2px 8px rgba(124,58,237,.35)}
+.rval{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;color:var(--v);text-align:center;margin-bottom:4px}
+.pp-h2{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:800;color:var(--b);margin:18px 0 6px}
+.pp-p{font-size:13.5px;color:var(--g600);line-height:1.7}
+
+/* toast */
+.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--b);color:var(--w);padding:10px 22px;border-radius:var(--rF);font-size:13px;font-weight:600;z-index:9999;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;white-space:nowrap;box-shadow:var(--sh-lg)}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* AdMob banner spacer (native banner overlays outside the webview, this just reserves layout room if you enable an in-app banner container) */
+#adBannerSpace{flex-shrink:0;height:0;background:var(--w)}
+</style>
+</head>
+<body>
+
+<!-- Standalone diagnostic script — completely independent from Firebase.
+     Runs immediately, before anything else, so it proves whether the
+     WebView can execute JS at all, and surfaces the real reason if the
+     big Firebase module script below fails to load. -->
+<script>
+window.testTap=function(){
+  alert('✅ Buttons work fine — JavaScript is running.\nIf Google Sign-In still does not respond, the problem is specifically the Firebase script failing to load (see any error popup after this).');
+};
+window.addEventListener('error', function(e){
+  try{ alert('⚠️ JS Error:\n' + (e.message||'unknown') + '\n' + (e.filename||'') + ':' + (e.lineno||'')); }catch(_){}
+}, true);
+window.addEventListener('unhandledrejection', function(e){
+  try{ alert('⚠️ Promise error:\n' + (e.reason && e.reason.message ? e.reason.message : e.reason)); }catch(_){}
+});
+
+/* Terms of Use gate — runs independently of Firebase so it always works,
+   even if the network/Firebase script fails. Shows the terms first for
+   anyone who hasn't agreed yet; otherwise skips straight to the login page. */
+document.addEventListener('DOMContentLoaded', function(){
+  var agreed=false;
+  try{ agreed=localStorage.getItem('agreedTerms')==='1'; }catch(e){}
+  if(agreed){
+    var tp=document.getElementById('termsPage');
+    var ap=document.getElementById('authPage');
+    if(tp) tp.classList.remove('on');
+    if(ap) ap.classList.add('on');
+  }
+});
+window.acceptTerms=function(){
+  try{ localStorage.setItem('agreedTerms','1'); }catch(e){}
+  var tp=document.getElementById('termsPage');
+  var ap=document.getElementById('authPage');
+  var tc=document.getElementById('termsCloseBtn');
+  // was this the mandatory first-run gate (close button hidden), or a
+  // voluntary "view terms" opened from Settings/Login (close button shown)?
+  var wasViewedVoluntarily = tc && tc.classList.contains('on');
+  if(tc) tc.classList.remove('on');
+  if(tp) tp.classList.remove('on');
+  if(!wasViewedVoluntarily){
+    // first-run gate: proceed into the login/signup screen
+    if(ap) ap.classList.add('on');
+  }
+  // otherwise: just close the terms view and leave whatever was
+  // underneath (the app if logged in, or the login screen) untouched
+};
+window.closeTermsView=function(){
+  document.getElementById('termsPage').classList.remove('on');
+  document.getElementById('termsCloseBtn').classList.remove('on');
+  if(window._termsOpenedFromAuth && !document.getElementById('authPage').classList.contains('on')){
+    document.getElementById('authPage').classList.add('on');
+  }
+};
+window.viewTermsFromAuth=function(){
+  window._termsOpenedFromAuth=document.getElementById('authPage').classList.contains('on');
+  document.getElementById('termsCloseBtn').classList.add('on');
+  document.getElementById('termsPage').classList.add('on');
+  if(typeof pushUiState==='function')pushUiState();
+};
+</script>
+
+<!-- TERMS OF USE — must accept before continuing -->
+<div id="termsPage" class="on">
+  <button class="terms-close" id="termsCloseBtn" onclick="closeTermsView()">✕</button>
+  <div class="terms-scroll">
+    <h1 class="terms-h">Terms of Service</h1>
+    <p class="terms-p">Last updated: August 20, 2026<br>Please read these Terms of Service ("Terms") carefully before using Make Love Hub (the "App," "we," "us," or "our"). By creating an account or using the App, you agree to be bound by these Terms. If you do not agree, do not use the App.</p>
+
+    <h2 class="terms-h2">1. Eligibility</h2>
+    <p class="terms-p">You must be at least <strong>18 years old</strong> to create an account or use the App. The App is a dating and social-connection service intended solely for adults, and it does not knowingly allow anyone under 18 to register. By creating an account, you represent and confirm that you are 18 years of age or older, that you have the legal capacity to enter into these Terms, and that all information you provide is accurate. If we learn that an account belongs to someone under 18, we will suspend or delete that account.</p>
+
+    <h2 class="terms-h2">2. Your Account</h2>
+    <p class="terms-p">You are responsible for the accuracy of the information on your profile and for keeping your login credentials confidential. You may not share your account, let anyone else use it, or create more than one account for yourself. You may not impersonate another person, misrepresent your identity or age, or use photos that are not genuinely and recently of you. You are responsible for all activity that occurs under your account.</p>
+
+    <h2 class="terms-h2">3. User Content</h2>
+    <p class="terms-p">"User Content" means any photos, text, messages, or other material you submit to the App. You retain ownership of your User Content, but by posting it you grant us a non-exclusive, worldwide, royalty-free license to host, store, display, and transmit it solely for the purpose of operating and improving the App (for example, showing your profile to other members). You are solely responsible for the User Content you post and confirm you have the right to share it.</p>
+
+    <h2 class="terms-h2">4. Prohibited Conduct</h2>
+    <p class="terms-p">When using the App, you agree that you will NOT:</p>
+    <p class="terms-p">• Post content involving, sexualizing, or soliciting minors in any way — this is strictly forbidden and will be reported to the relevant authorities.<br>
+    • Harass, threaten, stalk, bully, or express hatred or discrimination toward any person or group based on race, ethnicity, religion, gender, sexual orientation, disability, or other protected characteristic.<br>
+    • Post sexually explicit photos or content, nudity, or content that is graphically violent, or solicit or offer sexual services, escort services, or prostitution.<br>
+    • Impersonate any person or entity, or misrepresent your identity, age, or affiliation.<br>
+    • Use the App for spam, scams, phishing, financial solicitation ("romance scams"), advertising, or any commercial purpose unrelated to genuine dating.<br>
+    • Upload viruses, malicious code, or attempt to interfere with, scrape, reverse-engineer, or gain unauthorized access to the App or other members' accounts.<br>
+    • Use the App if you have been convicted of, or are required to register as, a sex offender.<br>
+    • Engage in any activity that is illegal in your jurisdiction.</p>
+
+    <h2 class="terms-h2">5. Reporting, Blocking & Enforcement</h2>
+    <p class="terms-p">We do not pre-screen all content, but we investigate reports of violations of these Terms. If you encounter behavior or content that violates these Terms, please contact us using the details in Section 12 so we can review it. We may, at our discretion and without prior notice, remove content, warn, suspend, or permanently ban any account that violates these Terms or that we believe poses a risk to other members' safety.</p>
+
+    <h2 class="terms-h2">6. Safety & Meeting in Person</h2>
+    <p class="terms-p">We do not conduct criminal background checks on members and cannot guarantee the identity, age, or intentions of any user. You are solely responsible for your interactions with other members. If you decide to meet another member in person, use good judgment: meet in a public place, tell a friend or family member where you're going and who you're meeting, arrange your own transportation, and never send money, gift cards, or financial information to someone you have not met in person. Report any suspicious behavior immediately.</p>
+
+    <h2 class="terms-h2">7. Advertising & Third-Party Services</h2>
+    <p class="terms-p">The App is supported by advertising served through Google AdMob, and uses Google Firebase for account authentication and data storage. Your use of the App is also subject to the practices of these third-party providers, as described in our <a href="#" onclick="event.preventDefault();openOv('ovPrivacy')" style="color:#fff;text-decoration:underline">Privacy Policy</a>. We are not responsible for the content or practices of any third-party services, advertisers, or linked sites.</p>
+
+    <h2 class="terms-h2">8. Intellectual Property</h2>
+    <p class="terms-p">The App, including its design, graphics, logos, and underlying software, is owned by us or our licensors and is protected by copyright, trademark, and other intellectual property laws. You may not copy, modify, distribute, or create derivative works from the App without our written permission.</p>
+
+    <h2 class="terms-h2">9. Disclaimers</h2>
+    <p class="terms-p">The App is provided "as is" and "as available," without warranties of any kind, whether express or implied. We do not guarantee that you will find a match, that the App will be uninterrupted or error-free, or that any user's profile information is accurate or truthful.</p>
+
+    <h2 class="terms-h2">10. Limitation of Liability</h2>
+    <p class="terms-p">To the fullest extent permitted by law, we are not liable for any indirect, incidental, special, or consequential damages, or for any conduct of any user of the App, whether online or offline, arising from your use of the App.</p>
+
+    <h2 class="terms-h2">11. Termination</h2>
+    <p class="terms-p">You may stop using the App and delete your account at any time from Me → Edit Profile → Delete Account. We may suspend or terminate your account at our discretion if you violate these Terms, engage in behavior that harms other members, or for any other reason, with or without notice.</p>
+
+    <h2 class="terms-h2">12. Contact & Changes to These Terms</h2>
+    <p class="terms-p">We may update these Terms from time to time; continued use of the App after changes means you accept the updated Terms. If you have questions about these Terms or want to report a violation, contact us at <strong>support@makelovehub.app</strong>.</p>
+
+    <div style="height:20px"></div>
+  </div>
+  <div class="terms-bottom">
+    <label class="terms-check">
+      <input type="checkbox" id="termsCheck" onchange="document.getElementById('termsAgreeBtn').disabled=!this.checked">
+      <span>I have read and agree to the Terms of Service, and I confirm I am 18 years of age or older.</span>
+    </label>
+    <button class="g-btn" id="termsAgreeBtn" disabled onclick="acceptTerms()">I Agree — Continue</button>
+  </div>
+</div>
+
+<!-- AUTH -->
+<div id="authPage">
+  <div class="auth-bg">
+    <div class="auth-bg-grad"></div>
+    <div class="auth-grid"></div>
+    <div class="auth-orb" style="width:280px;height:280px;background:rgba(124,58,237,.25);top:-60px;left:-80px;--dur:9s;--tx:-20px;--ty:30px"></div>
+    <div class="auth-orb" style="width:200px;height:200px;background:rgba(236,72,153,.15);bottom:200px;right:-60px;--dur:7s;--delay:2s;--tx:30px;--ty:-20px"></div>
+    <div class="auth-orb" style="width:150px;height:150px;background:rgba(245,158,11,.12);bottom:280px;left:20px;--dur:11s;--delay:1s;--tx:-15px;--ty:25px"></div>
+  </div>
+  <div class="auth-top">
+    <div class="auth-badge">
+      <div class="auth-badge-dot"></div>
+      <div class="auth-badge-txt">NOW AVAILABLE · CLASSY DATING FOR ADULTS</div>
+    </div>
+    <div class="auth-headline">
+      Find<br>your<br><em>heart</em>
+    </div>
+    <div class="auth-desc">A classy community for adults looking for a real connection — start your journey now.</div>
+    <div class="auth-proof">
+      <div class="auth-avatars">
+        <div class="auth-av">👩</div>
+        <div class="auth-av">👨</div>
+        <div class="auth-av">👩</div>
+        <div class="auth-av">👨</div>
+      </div>
+      <div class="auth-proof-txt">Join <strong>+12,000</strong> active members</div>
+    </div>
+  </div>
+  <div class="auth-bottom">
+    <div class="auth-app-row">
+      <div class="auth-app-icon">💫</div>
+      <div class="auth-app-info">
+        <div class="auth-app-name">Make Love Hub</div>
+        <div class="auth-app-tagline">Serious dating for adults 18+</div>
+      </div>
+    </div>
+    <input class="auth-input" type="email" id="authEmail" placeholder="Email address" autocomplete="email">
+    <input class="auth-input" type="password" id="authPass" placeholder="Password" autocomplete="current-password">
+    <label class="terms-check" style="color:rgba(255,255,255,.7);font-size:13px">
+      <input type="checkbox" id="authPolicyCheck" onchange="updateAuthBtns()">
+      <span>I have read and agree to the <a href="#" onclick="event.preventDefault();openOv('ovPrivacy')" style="color:#fff;text-decoration:underline">Privacy Policy</a> and <a href="#" onclick="event.preventDefault();viewTermsFromAuth()" style="color:#fff;text-decoration:underline">Terms of Service</a>.</span>
+    </label>
+    <label class="terms-check" style="color:rgba(255,255,255,.7);font-size:13px">
+      <input type="checkbox" id="authAgeCheck" onchange="updateAuthBtns()">
+      <span>I confirm that I am at least 18 years old.</span>
+    </label>
+    <div id="authMsg" style="min-height:16px;color:#FCA5A5;font-size:12px;margin-bottom:10px"></div>
+    <button class="g-btn" id="loginBtn" disabled onclick="handleAuth('login')">Log In</button>
+    <button type="button" id="signupBtn" disabled style="width:100%;margin-top:10px;padding:15px;border-radius:16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:15px;font-weight:700" onclick="handleAuth('signup')">Create New Account</button>
+    <button type="button" style="width:100%;margin-top:12px;padding:6px;background:none;border:none;color:rgba(255,255,255,.5);font-size:12px;text-decoration:underline" onclick="forgotPassword()">Forgot password?</button>
+    <div class="auth-terms">By continuing you accept the <a href="#" onclick="event.preventDefault();viewTermsFromAuth()">Terms of Use</a> and confirm you are 18 years of age or older</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="tb-logo">Make Love <em>Hub</em></div>
+    <div class="tb-actions">
+      <button class="tb-btn" onclick="goTab('chats')">📩<div class="tb-dot" id="inboxDot"></div></button>
+      <button class="tb-btn" onclick="st('No new notifications')">🔔</button>
+    </div>
+  </div>
+  <div class="screens">
+
+    <!-- DISCOVER -->
+    <div class="scr on" id="scrDiscover">
+      <div class="disc-head">
+        <div class="disc-title">Discover <span>People</span></div>
+        <button class="flt-btn" onclick="openFilters()">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H2l5 5.5V13l2 1V7.5z"/></svg>
+          Filter
+        </button>
+      </div>
+      <div class="page-bar">
+        <div class="page-info" id="pageInfo">Loading…</div>
+        <div class="page-count" id="pageCount"></div>
+      </div>
+      <div class="ugrid" id="ugrid">
+        <div class="sk" style="aspect-ratio:3/4"></div>
+        <div class="sk" style="aspect-ratio:3/4"></div>
+        <div class="sk" style="aspect-ratio:3/4"></div>
+        <div class="sk" style="aspect-ratio:3/4"></div>
+        <div class="sk" style="aspect-ratio:3/4"></div>
+        <div class="sk" style="aspect-ratio:3/4"></div>
+      </div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+
+    <!-- CHATS -->
+    <div class="scr" id="scrChats">
+      <div class="chats-head">
+        <div class="chats-title">Messages 💬</div>
+      </div>
+      <div id="convList" style="padding-top:8px">
+        <div style="padding:60px 20px;text-align:center">
+          <div style="font-size:52px;margin-bottom:14px">📭</div>
+          <div class="empty-h">No messages yet</div>
+          <div class="empty-p">Start a conversation from someone's profile</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MY PROFILE -->
+    <div class="scr" id="scrProfile">
+      <div class="my-hero" id="myHero">
+        <img class="my-hero-photo" id="myHeroPhoto" style="display:none">
+        <div class="my-hero-ph" id="myHeroPh">👤</div>
+        <div class="my-hero-grad"></div>
+        <button class="my-edit-fab" onclick="openEdit(false)">✏️ Edit Profile</button>
+        <div class="my-hero-info">
+          <div class="my-hero-name" id="myName">Your Profile</div>
+          <div class="my-hero-chips" id="myChips"></div>
+        </div>
+      </div>
+      <div class="my-body">
+        <div class="my-bio-card" id="myBioCard">
+          <div class="my-bio-lbl">About Me</div>
+          <div class="my-bio-txt" id="myBio">You haven't written a bio yet…</div>
+          <div class="my-tags" id="myTags"></div>
+        </div>
+        <div class="stats-card">
+          <div class="sc-stat"><div class="sc-n" id="stV">0</div><div class="sc-l">Views</div></div>
+          <div class="sc-stat"><div class="sc-n" id="stM">0</div><div class="sc-l">Messages</div></div>
+        </div>
+        <div class="sett-lbl">Settings</div>
+        <div class="sett-card">
+          <div class="srow" onclick="openEdit(false)"><div class="srow-ico">✏️</div><span class="srow-lbl">Edit Profile</span><span class="srow-arr">›</span></div>
+          <div class="srow" onclick="openFilters()"><div class="srow-ico">🎯</div><span class="srow-lbl">Search Preferences</span><span class="srow-arr">›</span></div>
+          <div class="srow" onclick="goTab('chats')"><div class="srow-ico">📩</div><span class="srow-lbl">Inbox</span><span class="srow-arr">›</span></div>
+          <div class="srow" onclick="openOv('ovPrivacy')"><div class="srow-ico">🔒</div><span class="srow-lbl">Privacy Policy</span><span class="srow-arr">›</span></div>
+          <div class="srow" onclick="viewTermsFromAuth()"><div class="srow-ico">📄</div><span class="srow-lbl">Terms of Service</span><span class="srow-arr">›</span></div>
+        </div>
+        <div class="sett-card" id="adminRow" style="display:none">
+          <div class="srow" onclick="openAdminPanel()"><div class="srow-ico">🛡️</div><span class="srow-lbl">Admin Panel</span><span class="srow-arr">›</span></div>
+        </div>
+        <div class="sett-card">
+          <div class="srow" onclick="doLogout()"><div class="srow-ico">🚪</div><span class="srow-lbl">Log Out</span><span class="srow-arr">›</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <nav class="bnav">
+    <button class="bn on" id="bn-discover" onclick="goTab('discover')"><div class="bn-line"></div><span class="bn-ico">🔍</span><span>Discover</span></button>
+    <button class="bn" id="bn-chats" onclick="goTab('chats')"><div class="bn-line"></div><span class="bn-ico">💬</span><span>Messages</span></button>
+    <button class="bn" id="bn-profile" onclick="goTab('profile')"><div class="bn-line"></div><span class="bn-ico">👤</span><span>Me</span></button>
+  </nav>
+</div>
+
+<!-- PROFILE SHEET — FULLSCREEN -->
+<div id="profSheet">
+  <button class="ps-close" onclick="closeProfSheet()">✕</button>
+  <button class="ps-more" id="psMoreBtn" onclick="openUserActions()">⋯</button>
+  <div class="ps-scroll" id="psInfo">
+    <div class="ps-photo-zone" id="psPhotoZone">
+      <div class="ps-photo-dots" id="psDots"></div>
+      <img class="ps-photo-img" id="psImg" alt="" onerror="this.style.display='none';document.getElementById('psPh').style.display='flex'">
+      <div class="ps-photo-tap left" onclick="psPhotoNav(-1)"></div>
+      <div class="ps-photo-tap right" onclick="psPhotoNav(1)"></div>
+      <div class="ps-photo-ph" id="psPh">👤</div>
+      <div class="ps-photo-fade"></div>
+      <div class="ps-photo-name">
+        <div class="ps-ph-name" id="psName"></div>
+        <div class="ps-ph-chips" id="psChips"></div>
+      </div>
+    </div>
+    <div class="ps-info" id="psInfoBody">
+      <div style="text-align:center;padding:40px;color:rgba(255,255,255,.3)">⏳ Loading…</div>
+    </div>
+  </div>
+  <div class="ps-action-bar">
+    <button class="ps-msg-btn" id="psMsgBtn">💬 Send Message</button>
+  </div>
+</div>
+
+<!-- CHAT WINDOW -->
+<div id="chatWin">
+  <div class="cw-hdr">
+    <button class="cw-back" onclick="closeChat()">‹</button>
+    <div class="cw-ava" id="cwAva" onclick="viewChatProf()" style="cursor:pointer"><div class="cw-ondot"></div></div>
+    <div class="cw-inf" onclick="viewChatProf()" style="cursor:pointer"><div class="cw-name" id="cwName">-</div><div class="cw-status">Online now</div></div>
+    <button class="cw-prof-btn" onclick="viewChatProf()">Profile</button>
+    <button class="cw-prof-btn" style="margin-left:6px;padding:7px 11px" onclick="openUserActions(chatUid,chatName)">⋯</button>
+  </div>
+  <div class="cw-msgs" id="cwMsgs"></div>
+  <div class="cw-inp">
+    <textarea class="cw-ta" id="cwTa" placeholder="Type a message…" rows="1" oninput="grow(this)" onkeydown="cwKey(event)"></textarea>
+    <button class="cw-send" onclick="sendMsg()">➤</button>
+  </div>
+</div>
+
+<!-- EDIT PROFILE -->
+<div class="ov" id="ovEdit">
+  <div class="sheet">
+    <div class="sh-pill"></div>
+    <div class="sh-h" id="editH">Edit Profile</div>
+    <div class="sh-s" id="editS">Make your profile more appealing</div>
+    <label class="flbl" style="text-align:center;display:block">Photos (up to 5)</label>
+    <div class="photo-warn">🚫 No nudity or sexually explicit photos. Use only genuine, recent photos of <strong>yourself</strong> — using someone else's photos is not allowed. Every photo is reviewed by our team before it becomes visible to other members.</div>
+    <div class="photo-explain">
+      ℹ️ Your <strong>first photo</strong> is always your Profile Photo, shown across the app. <strong>You can see all your own photos here at any time</strong> — even ones that are still pending review. Only <strong>other members</strong> have to wait until a photo is approved before they can see it. Tap <strong>"Set as Profile"</strong> on any photo to make it your main one.
+    </div>
+    <div id="photoStatusBanner" style="display:none"></div>
+    <div class="photo-grid" id="photoGrid"></div>
+    <input type="file" accept="image/*" id="photoFileInput" style="display:none" onchange="handlePhotoFile(this)">
+    <p id="picLoad" style="display:none;text-align:center;font-size:12px;color:var(--v);margin-bottom:10px">⏳ Processing…</p>
+    <p class="photo-hint">Tap ✕ to remove a photo.</p>
+    <input type="hidden" id="pic64">
+    <label class="flbl">Full Name *</label>
+    <input class="finp" type="text" id="eName" placeholder="Your name">
+    <label class="flbl">I am *</label>
+    <div class="gpair" id="genderPair">
+      <div class="gopt" id="gM" onclick="pickG('male')">👨 Man</div>
+      <div class="gopt" id="gF" onclick="pickG('female')">👩 Woman</div>
+    </div>
+    <div class="locked-field" id="genderLocked" style="display:none">
+      <span id="genderLockedVal">-</span><span>🔒</span>
+    </div>
+    <input type="hidden" id="eGender">
+    <label class="flbl">Date of Birth *</label>
+    <input class="finp" type="date" id="eDob" style="display:none" max="">
+    <div class="locked-field" id="dobLocked" style="display:none">
+      <span id="dobLockedVal">-</span><span>🔒</span>
+    </div>
+    <label class="flbl">About Me</label>
+    <textarea class="fta" id="eBio" placeholder="Write something appealing about yourself…"></textarea>
+    <label class="flbl">Country 🌍</label>
+    <select class="fsel" id="eCountry">
+      <option value="">Choose your country</option>
+      <option value="SA">🇸🇦 Saudi Arabia</option><option value="AE">🇦🇪 UAE</option>
+      <option value="KW">🇰🇼 Kuwait</option><option value="QA">🇶🇦 Qatar</option>
+      <option value="BH">🇧🇭 Bahrain</option><option value="OM">🇴🇲 Oman</option>
+      <option value="JO">🇯🇴 Jordan</option><option value="LB">🇱🇧 Lebanon</option>
+      <option value="SY">🇸🇾 Syria</option><option value="IQ">🇮🇶 Iraq</option>
+      <option value="EG">🇪🇬 Egypt</option><option value="LY">🇱🇾 Libya</option>
+      <option value="TN">🇹🇳 Tunisia</option><option value="DZ">🇩🇿 Algeria</option>
+      <option value="MA">🇲🇦 Morocco</option><option value="SD">🇸🇩 Sudan</option>
+      <option value="YE">🇾🇪 Yemen</option><option value="PS">🇵🇸 Palestine</option>
+      <option value="TR">🇹🇷 Turkey</option><option value="DE">🇩🇪 Germany</option>
+      <option value="FR">🇫🇷 France</option><option value="GB">🇬🇧 United Kingdom</option>
+      <option value="US">🇺🇸 United States</option><option value="CA">🇨🇦 Canada</option>
+      <option value="AU">🇦🇺 Australia</option><option value="OTHER">🌐 Other</option>
+    </select>
+    <label class="flbl">Language 🗣️</label>
+    <select class="fsel" id="eLang">
+      <option value="">Choose your language</option>
+      <option value="ar">🇸🇦 Arabic</option><option value="en">🇺🇸 English</option>
+      <option value="fr">🇫🇷 French</option><option value="tr">🇹🇷 Turkish</option>
+      <option value="fa">🇮🇷 Persian</option><option value="ur">🇵🇰 Urdu</option>
+      <option value="de">🇩🇪 German</option><option value="es">🇪🇸 Spanish</option>
+      <option value="ru">🇷🇺 Russian</option><option value="other">🌐 Other</option>
+    </select>
+    <label class="flbl">Relationship Status 💍</label>
+    <select class="fsel" id="eStatus">
+      <option value="">Choose your status</option>
+      <option value="single">💚 Single</option>
+      <option value="divorced">🔄 Divorced</option>
+      <option value="widowed">🕊️ Widowed</option>
+    </select>
+    <label class="flbl">My Interests</label>
+    <div class="itags" id="iTagsWrap"></div>
+
+    <label class="flbl">Looking For 👁️</label>
+    <select class="fsel" id="eLooking">
+      <option value="">Choose</option>
+      <option value="long_term">💍 A serious long-term relationship</option>
+      <option value="long_open">💕 Long-term, open to short</option>
+      <option value="short_open">✨ Short-term, open to long</option>
+      <option value="short_term">🎉 A short-term relationship</option>
+      <option value="new_friends">🤝 New friends</option>
+      <option value="not_sure">🤔 Not sure yet</option>
+    </select>
+
+    <label class="flbl">Zodiac Sign 🌙</label>
+    <select class="fsel" id="eZodiac">
+      <option value="">Choose your sign</option>
+      <option value="aries">♈ Aries</option><option value="taurus">♉ Taurus</option>
+      <option value="gemini">♊ Gemini</option><option value="cancer">♋ Cancer</option>
+      <option value="leo">♌ Leo</option><option value="virgo">♍ Virgo</option>
+      <option value="libra">♎ Libra</option><option value="scorpio">♏ Scorpio</option>
+      <option value="sagittarius">♐ Sagittarius</option><option value="capricorn">♑ Capricorn</option>
+      <option value="aquarius">♒ Aquarius</option><option value="pisces">♓ Pisces</option>
+    </select>
+
+    <label class="flbl">Education 🎓</label>
+    <select class="fsel" id="eEducation">
+      <option value="">Choose</option>
+      <option value="high_school">🏫 High School</option>
+      <option value="bachelor">🎓 Bachelor's Degree</option>
+      <option value="master">📚 Master's Degree</option>
+      <option value="phd">🔬 PhD</option>
+      <option value="other_edu">🌐 Other</option>
+    </select>
+
+    <label class="flbl">Family Plans 👶</label>
+    <select class="fsel" id="eFamily">
+      <option value="">Choose</option>
+      <option value="want_kids">👶 Want kids</option>
+      <option value="dont_want">🚫 Don't want kids</option>
+      <option value="have_want_more">👨‍👩‍👧 Have kids, want more</option>
+      <option value="have_dont_want_more">👨‍👩‍👧‍👦 Have kids, don't want more</option>
+      <option value="not_sure_fam">🤔 Haven't decided yet</option>
+    </select>
+
+    <label class="flbl">Communication Style 💬</label>
+    <select class="fsel" id="eCommStyle">
+      <option value="">Choose</option>
+      <option value="big_texter">📱 Big texter</option>
+      <option value="phone_caller">📞 Prefers calls</option>
+      <option value="video_chatter">🎥 Prefers video calls</option>
+      <option value="bad_texter">😅 Bad texter</option>
+      <option value="in_person">🤝 Prefers meeting in person</option>
+    </select>
+
+    <label class="flbl">Love Language 💗</label>
+    <select class="fsel" id="eLoveStyle">
+      <option value="">Choose</option>
+      <option value="words">💌 Words of affirmation</option>
+      <option value="touch">🤗 Physical touch</option>
+      <option value="gifts">🎁 Gifts</option>
+      <option value="time">⏰ Quality time</option>
+      <option value="acts">🛠️ Acts of service</option>
+    </select>
+
+    <label class="flbl">Pets 🐾</label>
+    <select class="fsel" id="ePets">
+      <option value="">Choose</option>
+      <option value="dog">🐶 Dog</option><option value="cat">🐱 Cat</option>
+      <option value="both_pets">🐶🐱 Dog and cat</option>
+      <option value="other_pet">🐦 Other pet</option>
+      <option value="want_pet">💭 Want a pet</option>
+      <option value="no_pet">🚫 No pets</option>
+      <option value="allergic">🤧 Allergic to pets</option>
+    </select>
+
+    <label class="flbl">Drinking 🍷</label>
+    <select class="fsel" id="eDrinking">
+      <option value="">Choose</option>
+      <option value="yes_drink">🍷 I drink</option>
+      <option value="sometimes_drink">🍺 Sometimes</option>
+      <option value="no_drink">🚫 I don't drink</option>
+      <option value="sober">🌿 In recovery</option>
+    </select>
+
+    <label class="flbl">Smoking 🚬</label>
+    <select class="fsel" id="eSmoking">
+      <option value="">Choose</option>
+      <option value="yes_smoke">🚬 I smoke</option>
+      <option value="sometimes_smoke">💨 Sometimes</option>
+      <option value="no_smoke">🚫 I don't smoke</option>
+      <option value="trying_quit">🌱 Trying to quit</option>
+    </select>
+
+    <label class="flbl">Exercise 🏋️</label>
+    <select class="fsel" id="eWorkout">
+      <option value="">Choose</option>
+      <option value="daily_workout">🔥 Daily</option>
+      <option value="often_workout">💪 Often</option>
+      <option value="sometimes_workout">🚶 Sometimes</option>
+      <option value="never_workout">🛋️ Rarely</option>
+    </select>
+
+    <label class="flbl">Social Media 📱</label>
+    <select class="fsel" id="eSocial">
+      <option value="">Choose</option>
+      <option value="very_active">📲 Very active</option>
+      <option value="active_social">✅ Active</option>
+      <option value="barely_social">😶 Barely use it</option>
+      <option value="off_grid">🚫 Don't use it</option>
+    </select>
+
+    <button class="btn-p" id="saveProfBtn" onclick="saveProfile()">💾 Save Profile</button>
+    <button class="btn-d" id="delAccBtn" style="display:none" onclick="deleteAcc()">🗑️ Delete Account</button>
+    <button class="btn-s" id="cancelEditBtn" style="display:none" onclick="closeOv('ovEdit')">Cancel</button>
+  </div>
+</div>
+
+<!-- FILTERS -->
+<div class="ov" id="ovFilters">
+  <div class="sheet">
+    <div class="sh-pill"></div>
+    <div class="sh-h">Search Preferences 🎯</div>
+    <div class="sh-s">Choose who you'd like to meet</div>
+    <label class="flbl">Looking for</label>
+    <div class="gpair" style="flex-wrap:wrap;gap:8px">
+      <div class="gopt on" id="fgAll" onclick="pickFG('all')" style="flex:none;padding:11px 18px">👥 Everyone</div>
+      <div class="gopt" id="fgMale" onclick="pickFG('male')" style="flex:none;padding:11px 18px">👨 Men</div>
+      <div class="gopt" id="fgFemale" onclick="pickFG('female')" style="flex:none;padding:11px 18px">👩 Women</div>
+    </div>
+    <input type="hidden" id="fgVal" value="all">
+    <label class="flbl">Age Range</label>
+    <div class="rval" id="ageDisp">18 – 60</div>
+    <input type="range" id="rMin" min="18" max="90" value="18" oninput="updAge()">
+    <input type="range" id="rMax" min="18" max="90" value="60" oninput="updAge()">
+    <label class="flbl" style="margin-top:8px">Country</label>
+    <select class="fsel" id="fCountry">
+      <option value="">All</option>
+      <option value="SA">🇸🇦 Saudi Arabia</option><option value="AE">🇦🇪 UAE</option>
+      <option value="KW">🇰🇼 Kuwait</option><option value="QA">🇶🇦 Qatar</option>
+      <option value="EG">🇪🇬 Egypt</option><option value="MA">🇲🇦 Morocco</option>
+      <option value="DZ">🇩🇿 Algeria</option><option value="TN">🇹🇳 Tunisia</option>
+      <option value="JO">🇯🇴 Jordan</option><option value="OTHER">🌐 Other</option>
+    </select>
+    <label class="flbl">Relationship Status</label>
+    <select class="fsel" id="fStatus">
+      <option value="">All</option>
+      <option value="single">💚 Single</option>
+      <option value="divorced">🔄 Divorced</option>
+      <option value="widowed">🕊️ Widowed</option>
+    </select>
+    <label class="flbl">Language</label>
+    <select class="fsel" id="fLang">
+      <option value="">All</option>
+      <option value="ar">🇸🇦 Arabic</option><option value="en">🇺🇸 English</option>
+      <option value="fr">🇫🇷 French</option><option value="tr">🇹🇷 Turkish</option>
+      <option value="other">🌐 Other</option>
+    </select>
+    <button class="btn-p" style="margin-top:14px" onclick="applyFilters()">✅ Apply Filters</button>
+    <button class="btn-s" onclick="closeOv('ovFilters')">Cancel</button>
+  </div>
+</div>
+
+<div class="ov" id="ovPrivacy">
+  <div class="sheet">
+    <div class="sh-pill"></div>
+    <div class="sh-h">Privacy Policy 🔒</div>
+    <div class="sh-s">Last updated: August 20, 2026</div>
+
+    <h2 class="pp-h2">1. Introduction</h2>
+    <p class="pp-p">This Privacy Policy explains how Make Love Hub ("we," "us," "our") collects, uses, shares, and protects your information when you use our mobile application (the "App"). By creating an account or using the App, you agree to the collection and use of information as described in this policy. This App is intended only for users who are 18 years of age or older.</p>
+
+    <h2 class="pp-h2">2. Information We Collect</h2>
+    <p class="pp-p"><strong>Account information:</strong> when you register, we collect your email address and a password (stored securely and encrypted by our authentication provider, Google Firebase Authentication — we never see or store your password in plain text).</p>
+    <p class="pp-p"><strong>Profile information:</strong> your name, date of birth, gender, profile photo, bio, country, spoken language, relationship status, and any other optional details you choose to add to your profile.</p>
+    <p class="pp-p"><strong>Content you create:</strong> messages you send to other members, and any photos you upload.</p>
+    <p class="pp-p"><strong>Usage & device data:</strong> we and our service providers may automatically collect technical information such as your device type, operating system, app version, general usage patterns (e.g. screens viewed, features used, crash logs), IP address, and advertising identifiers, to help us operate, secure, and improve the App.</p>
+    <p class="pp-p"><strong>Advertising data:</strong> the App displays ads served by Google AdMob. AdMob may collect device identifiers (such as your Android Advertising ID), approximate location, and ad interaction data to serve and measure ads and to prevent fraud, as described in Google's own Privacy Policy.</p>
+    <p class="pp-p">We do not knowingly collect any information from anyone under the age of 18.</p>
+
+    <h2 class="pp-h2">3. How We Use Your Information</h2>
+    <p class="pp-p">We use the information we collect to: create and display your profile to other members; let you search, filter, and message other members; verify that you meet the 18+ age requirement (your exact date of birth is never shown publicly — only your calculated age is shown); operate, maintain, and improve the App; detect, investigate, and prevent fraud, abuse, and violations of our Terms of Service; respond to your support requests; and show you relevant, non-personalized or personalized ads, depending on your device settings.</p>
+
+    <h2 class="pp-h2">4. How We Share Your Information</h2>
+    <p class="pp-p"><strong>With other members:</strong> your profile details (name, age, photo, bio, and any other information you choose to add) are visible to other members of the App, since this is necessary for the dating/matching service to function. Your email address and password are never shared with or shown to other members.</p>
+    <p class="pp-p"><strong>With service providers:</strong> we use Google Firebase (Authentication, Firestore database, and Cloud Messaging) to store account and profile data and deliver notifications, and Google AdMob to serve advertising. These providers process data on our behalf under their own privacy and security commitments.</p>
+    <p class="pp-p"><strong>For legal reasons:</strong> we may disclose information if required to do so by law, or if we believe in good faith that disclosure is necessary to protect our rights, investigate fraud, respond to a government request, or protect the safety of our users or the public.</p>
+    <p class="pp-p"><strong>Business transfers:</strong> if the App is involved in a merger, acquisition, or sale of assets, your information may be transferred as part of that transaction; we will notify you of any such change.</p>
+    <p class="pp-p"><strong>We do not sell your personal information to third parties.</strong></p>
+
+    <h2 class="pp-h2">5. Data Retention</h2>
+    <p class="pp-p">We retain your account and profile information for as long as your account remains active, so that the App can function and other members can see and interact with your profile. If you delete your account, your profile and personal data are permanently removed from our active database right away, except where we are required to retain certain records for a limited period for legal, security, or fraud-prevention purposes.</p>
+
+    <h2 class="pp-h2">6. Data Security</h2>
+    <p class="pp-p">We use industry-standard security measures — including encrypted connections (HTTPS/TLS) and Google Firebase's built-in security infrastructure — to protect your information from unauthorized access, alteration, disclosure, or destruction. However, no method of electronic storage or transmission is 100% secure, and we cannot guarantee absolute security.</p>
+
+    <h2 class="pp-h2">7. Your Rights & Choices</h2>
+    <p class="pp-p">You can review and update most of your profile information at any time from <strong>Me → Edit Profile</strong>. Depending on where you live, you may have additional rights over your personal data — such as the right to access, correct, export, or request deletion of your data, or to object to or restrict certain processing (for example, under the EU/UK GDPR or the California Consumer Privacy Act). To exercise any of these rights, contact us using the details in Section 11.</p>
+    <p class="pp-p">You can also limit ad personalization at any time from your device's system settings (for example, Settings → Privacy → Ads on Android), which controls how AdMob and other advertisers use your advertising identifier.</p>
+
+    <h2 class="pp-h2">8. How to Delete Your Account</h2>
+    <p class="pp-p">You are always in control of your data. To permanently delete your account and all associated profile information, go to <strong>Me → Edit Profile</strong>, scroll to the bottom, and tap <strong>🗑️ Delete Account</strong>, then confirm. This immediately and permanently removes your profile from our database and signs you out. This action cannot be undone. You may also request deletion by contacting us directly (Section 11) if you are unable to access the App.</p>
+
+    <h2 class="pp-h2">9. Children's Privacy</h2>
+    <p class="pp-p">The App is not directed at, and is not intended for use by, anyone under 18 years of age. We do not knowingly collect personal information from children. If we become aware that a user is under 18, we will promptly delete that account and any associated data.</p>
+
+    <h2 class="pp-h2">10. International Data Transfers</h2>
+    <p class="pp-p">Your information may be processed and stored on servers located in countries other than your own, through our use of Google Firebase's global infrastructure. Wherever your data is processed, we take steps to ensure it receives an adequate level of protection consistent with this Privacy Policy.</p>
+
+    <h2 class="pp-h2">11. Contact Us</h2>
+    <p class="pp-p">If you have questions about this Privacy Policy, want to exercise your data rights, or want to report a concern, contact us at <strong>support@makelovehub.app</strong>.</p>
+
+    <h2 class="pp-h2">12. Changes to This Policy</h2>
+    <p class="pp-p">We may update this Privacy Policy from time to time. If we make material changes, we will notify you through the App or by other reasonable means. Continued use of the App after changes take effect means you accept the updated policy.</p>
+
+    <button class="btn-s" style="margin-top:14px" onclick="closeOv('ovPrivacy')">Close</button>
+  </div>
+</div>
+
+<div class="ov" id="ovAdmin">
+  <div class="sheet">
+    <div class="sh-pill"></div>
+    <div class="sh-h">Admin Panel 🛡️</div>
+    <div class="sh-s">All registered users</div>
+    <div class="admin-stats">
+      <div class="admin-stat"><div class="admin-stat-n" id="adTotalN">0</div><div class="admin-stat-l">Total Users</div></div>
+      <div class="admin-stat"><div class="admin-stat-n" id="adNewN">0</div><div class="admin-stat-l">New (48h)</div></div>
+      <div class="admin-stat"><div class="admin-stat-n" id="adPendingN" style="color:#F59E0B">0</div><div class="admin-stat-l">Pending Review</div></div>
+    </div>
+    <div class="admin-tabs">
+      <div class="admin-tab on" id="adTabAll" onclick="setAdminFilter('all')">All Users</div>
+      <div class="admin-tab" id="adTabPending" onclick="setAdminFilter('pending')">📷 Pending</div>
+      <div class="admin-tab" id="adTabNew" onclick="setAdminFilter('new')">New</div>
+    </div>
+    <div id="adminList"><div style="text-align:center;padding:40px;color:var(--g400)">⏳ Loading…</div></div>
+    <button class="btn-s" style="margin-top:14px;background:#FEF2F2;color:#B91C1C" onclick="openAdminReports()">🚩 View User Reports</button>
+    <button class="btn-s" style="margin-top:10px" onclick="closeOv('ovAdmin')">Close</button>
+  </div>
+</div>
+
+<div class="ov" id="ovAdminReports">
+  <div class="sheet">
+    <div class="sh-pill"></div>
+    <div class="sh-h">User Reports 🚩</div>
+    <div class="sh-s">Reports submitted by members</div>
+    <div id="adminReportsList"><div style="text-align:center;padding:40px;color:var(--g400)">⏳ Loading…</div></div>
+    <button class="btn-s" style="margin-top:14px" onclick="closeOv('ovAdminReports')">Close</button>
+  </div>
+</div>
+
+<div class="ov" id="ovAdminUser">
+  <div class="sheet">
+    <div class="sh-pill"></div>
+    <div class="sh-h" id="adUName">-</div>
+    <div class="sh-s" id="adUEmail">-</div>
+    <div id="adUStatusBanner" style="display:none"></div>
+    <p class="photo-hint" style="margin-top:-4px">Tap ✅ / 🚫 on each photo to review it individually.</p>
+    <div class="admin-photos-grid" id="adUPhotos"></div>
+    <div id="adUInfo" style="font-size:13px;color:var(--g600);line-height:1.7;margin-bottom:6px"></div>
+    <button class="admin-del-btn" id="adUBlockBtn" style="background:#111118" onclick="adminToggleBlock()">🔒 Block User</button>
+    <button class="admin-del-btn" onclick="adminDeleteUser()">🗑️ Delete User & All Photos</button>
+    <button class="btn-s" style="margin-top:10px" onclick="closeOv('ovAdminUser')">Cancel</button>
+  </div>
+</div>
+
+<div class="ov" id="ovUserActions">
+  <div class="sheet" style="padding:0 18px 34px">
+    <div class="sh-pill"></div>
+    <div class="sh-h" id="uaName" style="font-size:18px">User</div>
+    <div class="sh-s" style="margin-bottom:6px">Choose an action</div>
+    <button class="ua-btn" onclick="openReportUser()">🚩 <span>Report this user</span></button>
+    <button class="ua-btn danger" id="uaBlockBtn" onclick="toggleMyBlock()">🚫 <span>Block this user</span></button>
+    <button class="btn-s" style="margin-top:14px" onclick="closeOv('ovUserActions')">Cancel</button>
+  </div>
+</div>
+
+<div class="ov" id="ovReportUser">
+  <div class="sheet">
+    <div class="sh-pill"></div>
+    <div class="sh-h">Report User 🚩</div>
+    <div class="sh-s" id="reportSub">Why are you reporting this profile?</div>
+    <div id="reportReasons">
+      <label class="reason-opt"><input type="radio" name="reportReason" value="Nudity or sexual content"><span>Nudity or sexual content</span></label>
+      <label class="reason-opt"><input type="radio" name="reportReason" value="Someone else's photos / fake profile"><span>Someone else's photos / fake profile</span></label>
+      <label class="reason-opt"><input type="radio" name="reportReason" value="Harassment or threats"><span>Harassment or threats</span></label>
+      <label class="reason-opt"><input type="radio" name="reportReason" value="Spam or scam"><span>Spam or scam</span></label>
+      <label class="reason-opt"><input type="radio" name="reportReason" value="Underage user"><span>Underage user</span></label>
+      <label class="reason-opt"><input type="radio" name="reportReason" value="Other"><span>Other</span></label>
+    </div>
+    <label class="flbl">Additional details (optional)</label>
+    <textarea class="finp" id="reportNote" rows="3" placeholder="Add any extra context…" style="resize:vertical"></textarea>
+    <button class="btn-p" style="margin-top:14px" onclick="submitReport()">Submit Report</button>
+    <button class="btn-s" style="margin-top:10px" onclick="closeOv('ovReportUser')">Cancel</button>
+  </div>
+</div>
+
+<div class="toast" id="toastEl"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+<script>
+const FB=firebase.initializeApp({apiKey:"AIzaSyCZz2gICcIzr4z1Z-s6XIGAuTEIH-Mq2d4",authDomain:"girlsfromasia-webapp.firebaseapp.com",projectId:"girlsfromasia-webapp",storageBucket:"girlsfromasia-webapp.firebasestorage.app",messagingSenderId:"384100376145",appId:"1:384100376145:web:0d0b9e3f6e070a2984e270",measurementId:"G-15J54QLYPR"});
+try{firebase.analytics();}catch(e){}
+const auth=firebase.auth(),db=firebase.firestore(),storage=firebase.storage(),gp=new firebase.auth.GoogleAuthProvider();
+const ADMIN="Zkimtar@gmail.com";
+const PER_PAGE=10;
+
+let CU=null,UD=null,isAdmin=false,editPhotos=[],psPhotos=[],psPhotoIdx=0;
+let myBlockedUids=new Set(),blockedByUids=new Set(),hiddenUids=new Set();
+let uaTargetUid=null,uaTargetName='';
+let allUsers=[];
+let fGender=localStorage.getItem('fGender')||'all';
+let fAgeMin=+(localStorage.getItem('fAgeMin')||18);
+let fAgeMax=+(localStorage.getItem('fAgeMax')||60);
+let fCountry=localStorage.getItem('fCountry')||'';
+let fStatus=localStorage.getItem('fStatus')||'';
+let fLang=localStorage.getItem('fLang')||'';
+let currentPage=1;
+let chatUid=null,chatName='',chatPic='';
+let currentProfUid=null;
+let profLoadToken=0;
+
+const INTERESTS=['☕ Coffee','📚 Reading','🎵 Music','🏋️ Fitness','🍕 Food','✈️ Travel','🎮 Games','🎨 Art','🎬 Movies','🌿 Nature','📸 Photography','🐾 Pets','🧘 Yoga','💃 Dancing','🍳 Cooking','🏄 Adventure'];
+const COUNTRIES={SA:'🇸🇦 Saudi Arabia',AE:'🇦🇪 UAE',KW:'🇰🇼 Kuwait',QA:'🇶🇦 Qatar',BH:'🇧🇭 Bahrain',OM:'🇴🇲 Oman',JO:'🇯🇴 Jordan',LB:'🇱🇧 Lebanon',SY:'🇸🇾 Syria',IQ:'🇮🇶 Iraq',EG:'🇪🇬 Egypt',LY:'🇱🇾 Libya',TN:'🇹🇳 Tunisia',DZ:'🇩🇿 Algeria',MA:'🇲🇦 Morocco',SD:'🇸🇩 Sudan',YE:'🇾🇪 Yemen',PS:'🇵🇸 Palestine',TR:'🇹🇷 Turkey',DE:'🇩🇪 Germany',FR:'🇫🇷 France',GB:'🇬🇧 United Kingdom',US:'🇺🇸 United States',CA:'🇨🇦 Canada',AU:'🇦🇺 Australia',OTHER:'🌐 Other'};
+const STATUSES={single:'💚 Single',divorced:'🔄 Divorced',widowed:'🕊️ Widowed'};
+const LANGS={ar:'🇸🇦 Arabic',en:'🇺🇸 English',fr:'🇫🇷 French',tr:'🇹🇷 Turkish',fa:'🇮🇷 Persian',ur:'🇵🇰 Urdu',de:'🇩🇪 German',es:'🇪🇸 Spanish',ru:'🇷🇺 Russian',other:'🌐 Other'};
+const LOOKING={long_term:'💍 A serious long-term relationship',long_open:'💕 Long-term, open to short',short_open:'✨ Short-term, open to long',short_term:'🎉 A short-term relationship',new_friends:'🤝 New friends',not_sure:'🤔 Not sure yet'};
+const ZODIAC={aries:'♈ Aries',taurus:'♉ Taurus',gemini:'♊ Gemini',cancer:'♋ Cancer',leo:'♌ Leo',virgo:'♍ Virgo',libra:'♎ Libra',scorpio:'♏ Scorpio',sagittarius:'♐ Sagittarius',capricorn:'♑ Capricorn',aquarius:'♒ Aquarius',pisces:'♓ Pisces'};
+const EDUCATION={high_school:'🏫 High School',bachelor:"🎓 Bachelor's Degree",master:"📚 Master's Degree",phd:'🔬 PhD',other_edu:'🌐 Other'};
+const FAMILY={want_kids:'👶 Want kids',dont_want:"🚫 Don't want kids",have_want_more:'👨‍👩‍👧 Have kids, want more',have_dont_want_more:"👨‍👩‍👧‍👦 Have kids, don't want more",not_sure_fam:"🤔 Haven't decided yet"};
+const COMMSTYLE={big_texter:'📱 Big texter',phone_caller:'📞 Prefers calls',video_chatter:'🎥 Prefers video calls',bad_texter:'😅 Bad texter',in_person:'🤝 Prefers meeting in person'};
+const LOVESTYLE={words:'💌 Words of affirmation',touch:'🤗 Physical touch',gifts:'🎁 Gifts',time:'⏰ Quality time',acts:'🛠️ Acts of service'};
+const PETS={dog:'🐶 Dog',cat:'🐱 Cat',both_pets:'🐶🐱 Dog and cat',other_pet:'🐦 Other pet',want_pet:'💭 Want a pet',no_pet:'🚫 No pets',allergic:'🤧 Allergic to pets'};
+const DRINKING={yes_drink:'🍷 I drink',sometimes_drink:'🍺 Sometimes',no_drink:"🚫 I don't drink",sober:'🌿 In recovery'};
+const SMOKING={yes_smoke:'🚬 I smoke',sometimes_smoke:'💨 Sometimes',no_smoke:"🚫 I don't smoke",trying_quit:'🌱 Trying to quit'};
+const WORKOUT={daily_workout:'🔥 Daily',often_workout:'💪 Often',sometimes_workout:'🚶 Sometimes',never_workout:'🛋️ Rarely'};
+const SOCIAL={very_active:'📲 Very active',active_social:'✅ Active',barely_social:'😶 Barely use it',off_grid:"🚫 Don't use it"};
+const FIELD_LABELS={lang:'Language',looking:'Looking for',zodiac:'Zodiac sign',education:'Education',family:'Family plans',commStyle:'Communication style',loveStyle:'Love language',pets:'Pets',drinking:'Drinking',smoking:'Smoking',workout:'Exercise',social:'Social media'};
+
+/* interests */
+const iw=document.getElementById('iTagsWrap');
+INTERESTS.forEach(n=>{const t=document.createElement('div');t.className='itag';t.textContent=n;t.onclick=()=>t.classList.toggle('on');iw.appendChild(t);});
+
+function hideSplash(){}
+
+/* Simple, reliable email/password sign-in — no native SDK, no popups,
+   no SHA-1 fingerprints, works the same in a browser or the packaged
+   Android app since it's just a normal network request. */
+function friendlyAuthError(code){
+  const map={
+    'auth/email-already-in-use':"This email is already registered — try Log In instead.",
+    'auth/invalid-email':'Please enter a valid email address.',
+    'auth/weak-password':'Password is too weak — use at least 6 characters.',
+    'auth/user-not-found':'No account found with this email.',
+    'auth/wrong-password':'Incorrect password.',
+    'auth/invalid-credential':'Incorrect email or password.',
+    'auth/missing-password':'Please enter a password.',
+    'auth/too-many-requests':'Too many attempts — please wait a moment and try again.'
+  };
+  return map[code];
+}
+window.updateAuthBtns=()=>{
+  const ok=document.getElementById('authPolicyCheck').checked&&document.getElementById('authAgeCheck').checked;
+  document.getElementById('loginBtn').disabled=!ok;
+  document.getElementById('signupBtn').disabled=!ok;
+};
+window.handleAuth=async(mode)=>{
+  const msgEl=document.getElementById('authMsg');
+  msgEl.textContent='';
+  const email=document.getElementById('authEmail').value.trim();
+  const pass=document.getElementById('authPass').value;
+  if(!document.getElementById('authPolicyCheck').checked||!document.getElementById('authAgeCheck').checked){
+    msgEl.textContent='Please agree to the Privacy Policy & Terms, and confirm you are 18 or older.';return;
+  }
+  if(!email||!pass){msgEl.textContent='Please enter your email and password.';return;}
+  try{
+    if(mode==='signup'){
+      await auth.createUserWithEmailAndPassword(email,pass);
+    }else{
+      await auth.signInWithEmailAndPassword(email,pass);
+    }
+  }catch(e){
+    msgEl.textContent=friendlyAuthError(e.code)||e.message;
+  }
+};
+window.forgotPassword=async()=>{
+  const email=document.getElementById('authEmail').value.trim();
+  const msgEl=document.getElementById('authMsg');
+  if(!email){msgEl.textContent='Enter your email above first, then tap this again.';return;}
+  try{
+    await auth.sendPasswordResetEmail(email);
+    msgEl.style.color='#86EFAC';
+    msgEl.textContent='✅ Password reset email sent — check your inbox.';
+  }catch(e){
+    msgEl.style.color='#FCA5A5';
+    msgEl.textContent=friendlyAuthError(e.code)||e.message;
+  }
+};
+window.doLogout=async()=>{
+  if(!confirm('Log out?'))return;
+  try{
+    await auth.signOut();
+    location.reload();
+  }catch(e){st('Error: '+e.message);}
+};
+
+auth.onAuthStateChanged(async user=>{
+  if(user){
+    CU=user;
+    try{const s=await db.collection('users').doc(user.uid).get();UD=s.exists?s.data():null;}catch(e){UD=null;}
+    // a user blocked by an admin is signed out immediately and can't
+    // access the app, regardless of how far they get in the auth flow
+    if(UD?.blocked===true){
+      hideSplash();
+      try{await auth.signOut();}catch(e){}
+      CU=null;UD=null;isAdmin=false;
+      document.getElementById('authPage').classList.add('on');
+      document.getElementById('app').classList.remove('on');
+      const msgEl=document.getElementById('authMsg');
+      if(msgEl){msgEl.style.color='#FCA5A5';msgEl.textContent='🚫 This account has been suspended for violating our content policy.';}
+      return;
+    }
+    // admin status is read from the user's own Firestore document
+    // (the `isAdmin` field), so it can be granted to any account by
+    // setting that field to true in Firebase — the hardcoded ADMIN
+    // email is kept only as a fallback bootstrap super-admin.
+    isAdmin = UD?.isAdmin===true || user.email.toLowerCase()===ADMIN.toLowerCase();
+    hideSplash();
+    document.getElementById('authPage').classList.remove('on');
+    document.getElementById('app').classList.add('on');
+    document.getElementById('adminRow').style.display = isAdmin ? 'flex' : 'none';
+    await loadMyBlocks();
+    if(!UD?.name||!UD?.gender||!UD?.dob){openEdit(true);}
+    else{updateProfUI();await loadUsers();}
+    initPushNotifications();
+    initAdMob();
+  }else{
+    CU=null;UD=null;isAdmin=false;hideSplash();
+    document.getElementById('authPage').classList.add('on');
+    document.getElementById('app').classList.remove('on');
+  }
+});
+
+window.goTab=name=>{
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.bn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('scr'+name.charAt(0).toUpperCase()+name.slice(1)).classList.add('on');
+  document.getElementById('bn-'+name).classList.add('on');
+  if(name==='chats')loadInboxScreen();
+  if(name==='profile')updateProfUI();
+};
+
+async function loadMyBlocks(){
+  myBlockedUids=new Set();blockedByUids=new Set();
+  try{
+    const q1=await db.collection('blocks').where('blocker','==',CU.uid).get();
+    q1.forEach(d=>myBlockedUids.add(d.data().blocked));
+    const q2=await db.collection('blocks').where('blocked','==',CU.uid).get();
+    q2.forEach(d=>blockedByUids.add(d.data().blocker));
+  }catch(e){}
+  // hidden from each other, in both directions, so neither party can
+  // find, view, or message the other once a block exists
+  hiddenUids=new Set([...myBlockedUids,...blockedByUids]);
+}
+async function loadUsers(){
+  try{
+    allUsers=[];
+    (await db.collection('users').limit(500).get()).forEach(d=>{
+      if(d.id!==CU.uid){const u=d.data();if(u.name&&u.gender&&u.dob&&!u.blocked&&!hiddenUids.has(d.id))allUsers.push({id:d.id,...u});}
+    });
+    allUsers.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    currentPage=1;renderGrid();
+  }catch(e){st('Error: '+e.message);}
+}
+
+function getFiltered(){
+  return allUsers.filter(u=>{
+    const age=calcAge(u.dob);
+    if(fGender!=='all'&&u.gender!==fGender)return false;
+    if(age<fAgeMin||age>fAgeMax)return false;
+    if(fCountry&&u.country!==fCountry)return false;
+    if(fStatus&&u.status!==fStatus)return false;
+    if(fLang&&u.lang!==fLang)return false;
+    return true;
+  });
+}
+
+function renderGrid(){
+  const grid=document.getElementById('ugrid');
+  const pg=document.getElementById('pagination');
+  const filtered=getFiltered();
+  const total=filtered.length;
+  const totalPages=Math.max(1,Math.ceil(total/PER_PAGE));
+  if(currentPage>totalPages)currentPage=totalPages;
+  const start=(currentPage-1)*PER_PAGE;
+  const pageUsers=filtered.slice(start,start+PER_PAGE);
+  const pageInfo=document.getElementById('pageInfo');
+  const pageCount=document.getElementById('pageCount');
+  if(!total){pageInfo.textContent='No matches';pageCount.textContent='';}
+  else{pageInfo.textContent=`${start+1}–${Math.min(start+PER_PAGE,total)} of ${total} people`;pageCount.textContent=`Page ${currentPage} / ${totalPages}`;}
+  grid.innerHTML='';
+  if(!pageUsers.length){
+    grid.innerHTML=`<div class="empty-grid"><div class="empty-ico">🔍</div><div class="empty-h">No matches</div><div class="empty-p">Try adjusting your search filters</div></div>`;
+    pg.innerHTML='';return;
+  }
+  pageUsers.forEach(u=>{
+    const age=calcAge(u.dob);
+    const isFemale=u.gender==='female';
+    const isNew=(Date.now()-(u.createdAt?.seconds||0)*1000)<86400000;
+    const flag=u.country&&COUNTRIES[u.country]?COUNTRIES[u.country].split(' ')[0]:'';
+    const card=document.createElement('div');
+    card.className='ucard';
+    card.onclick=()=>{openProf(u.id);};
+    const shownPic=approvedPic(u);
+    let photo=shownPic?`<img class="ucard-img" src="${shownPic}" loading="lazy">`:`<div class="ucard-ph ${isFemale?'ph-f':'ph-m'}">${isFemale?'👩':'👨'}</div>`;
+    card.innerHTML=`<div style="position:relative">${photo}<div class="ucard-grad"></div>${isNew?'<div class="ucard-new">New</div>':''}<div class="ucard-online"></div><div class="ucard-info"><div class="ucard-name">${esc(u.name)}${flag?' '+flag:''}</div><div class="ucard-age">${age} yrs${u.status&&STATUSES[u.status]?' · '+STATUSES[u.status].split('/')[0].trim():''}</div></div><div class="ucard-msg" onclick="event.stopPropagation();openChat('${u.id}','${esc(u.name||'')}','${shownPic}')">💬</div></div>`;
+    grid.appendChild(card);
+  });
+  renderPagination(totalPages);
+  document.getElementById('scrDiscover').scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderPagination(totalPages){
+  const pg=document.getElementById('pagination');pg.innerHTML='';
+  if(totalPages<=1)return;
+  const prev=document.createElement('button');prev.className='pg-btn';prev.textContent='‹';prev.disabled=currentPage===1;prev.onclick=()=>{if(currentPage>1){currentPage--;renderGrid();}};pg.appendChild(prev);
+  const pages=[];
+  if(totalPages<=5){for(let i=1;i<=totalPages;i++)pages.push(i);}
+  else{pages.push(1);if(currentPage>3)pages.push('…');for(let i=Math.max(2,currentPage-1);i<=Math.min(totalPages-1,currentPage+1);i++)pages.push(i);if(currentPage<totalPages-2)pages.push('…');pages.push(totalPages);}
+  pages.forEach(p=>{
+    if(p==='…'){const d=document.createElement('span');d.className='pg-dots';d.textContent='···';pg.appendChild(d);}
+    else{const b=document.createElement('button');b.className='pg-btn'+(p===currentPage?' on':'');b.textContent=p;b.onclick=()=>{currentPage=p;renderGrid();};pg.appendChild(b);}
+  });
+  const next=document.createElement('button');next.className='pg-btn';next.textContent='›';next.disabled=currentPage===totalPages;next.onclick=()=>{if(currentPage<totalPages){currentPage++;renderGrid();}};pg.appendChild(next);
+}
+
+function renderPsDots(){
+  const dotsEl=document.getElementById('psDots');
+  if(psPhotos.length<2){dotsEl.innerHTML='';return;}
+  dotsEl.innerHTML=psPhotos.map((_,i)=>`<span class="${i===psPhotoIdx?'on':''}"><i></i></span>`).join('');
+}
+window.psPhotoNav=dir=>{
+  if(psPhotos.length<2)return;
+  psPhotoIdx=(psPhotoIdx+dir+psPhotos.length)%psPhotos.length;
+  document.getElementById('psImg').src=psPhotos[psPhotoIdx];
+  renderPsDots();
+};
+window.openProf=async uid=>{
+  // if we're navigating here from inside the chat window, close it first —
+  // otherwise the profile sheet (z-index 300) renders silently behind the
+  // chat window (z-index 400) and looks like nothing happened
+  const chatWinEl=document.getElementById('chatWin');
+  if(chatWinEl.classList.contains('on')){
+    chatWinEl.classList.remove('on');
+    chatUid=null;
+  }
+  currentProfUid=uid;
+  const myToken=++profLoadToken;
+  pushUiState();
+  const sheet=document.getElementById('profSheet');
+
+  const imgEl  = document.getElementById('psImg');
+  const phEl   = document.getElementById('psPh');
+
+  imgEl.style.display = 'none';
+  phEl.style.display  = 'none';
+  document.getElementById('psDots').innerHTML = '';
+  document.getElementById('psName').textContent   = '';
+  document.getElementById('psChips').innerHTML    = '';
+  document.getElementById('psInfoBody').innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,.3)">⏳ Loading…</div>';
+  document.getElementById('psMsgBtn').onclick = null;
+
+  sheet.classList.add('on');
+  requestAnimationFrame(()=>{ document.getElementById('psInfo').scrollTop=0; });
+
+  try{
+    const snap=await db.collection('users').doc(uid).get();
+    if(myToken!==profLoadToken)return;
+    if(!snap.exists)throw new Error('Not found');
+    const u=snap.data();const age=calcAge(u.dob);
+    if((u.blocked || hiddenUids.has(uid)) && !isAdmin)throw new Error('Not found');
+    const isFemale=u.gender==='female';
+
+    psPhotos = approvedPhotos(u);
+    psPhotoIdx = 0;
+    renderPsDots();
+
+    if(psPhotos.length){
+      imgEl.src = psPhotos[0];
+      imgEl.style.display = 'block';
+    }else{
+      phEl.textContent     = isFemale?'👩':'👨';
+      phEl.style.background = isFemale
+        ? 'linear-gradient(160deg,#EDE0FF,#F3EEFF)'
+        : 'linear-gradient(160deg,#CCFBF1,#E0F7F5)';
+      phEl.style.display   = 'flex';
+    }
+
+    document.getElementById('psName').textContent=esc(u.name);
+    const chipsEl=document.getElementById('psChips');
+    chipsEl.innerHTML=`<span class="ps-ph-chip" style="background:rgba(124,58,237,.75);color:#fff">${age} yrs</span>
+      <span class="ps-ph-chip" style="background:rgba(255,255,255,.15);color:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.2)">${isFemale?'👩 Woman':'👨 Man'}</span>
+      ${u.country&&COUNTRIES[u.country]?`<span class="ps-ph-chip" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.15)">${COUNTRIES[u.country]}</span>`:''}
+      ${u.status&&STATUSES[u.status]?`<span class="ps-ph-chip" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.15)">${STATUSES[u.status]}</span>`:''}`;
+
+    const extraMap=[
+      ['looking',LOOKING],['zodiac',ZODIAC],['education',EDUCATION],['family',FAMILY],
+      ['commStyle',COMMSTYLE],['loveStyle',LOVESTYLE],['pets',PETS],['drinking',DRINKING],
+      ['smoking',SMOKING],['workout',WORKOUT],['social',SOCIAL]
+    ];
+    const extraItems=extraMap.filter(([k,m])=>u[k]&&m[u[k]]).map(([k,m])=>`<div class="ps-detail-item"><div class="ps-detail-lbl">${FIELD_LABELS[k]}</div><div class="ps-detail-val">${m[u[k]]}</div></div>`).join('');
+    const tags=(u.interests||[]).map(i=>`<span class="ps-tag">${i}</span>`).join('');
+    const langItem=u.lang&&LANGS[u.lang]?`<div class="ps-detail-item"><div class="ps-detail-lbl">${FIELD_LABELS.lang}</div><div class="ps-detail-val">${LANGS[u.lang]}</div></div>`:'';
+    document.getElementById('psInfoBody').innerHTML=`
+      ${u.bio?`<p class="ps-bio-txt">${esc(u.bio)}</p>`:''}
+      ${(extraItems||langItem)?`<div class="ps-section-lbl">Personal Info</div><div class="ps-detail-grid">${langItem}${extraItems}</div>`:''}
+      ${tags?`<div class="ps-section-lbl">Interests</div><div class="ps-tags">${tags}</div>`:''}
+      <div style="height:60px"></div>`;
+
+    document.getElementById('psMsgBtn').onclick=()=>{openChat(uid,u.name||'-',approvedPic(u));};
+  }catch(e){
+    if(myToken!==profLoadToken)return;
+    document.getElementById('psInfoBody').innerHTML=`<div style="padding:40px;text-align:center;color:var(--rose)">⚠️ ${e.message}</div>`;
+  }
+};
+
+window.closeProfSheet=()=>{
+  document.getElementById('profSheet').classList.remove('on');
+  currentProfUid=null;
+  profLoadToken++;
+  backUi();
+};
+
+/* ═══ CHATS ═══ */
+async function loadInboxScreen(){
+  const list=document.getElementById('convList');
+  list.innerHTML='<div style="text-align:center;padding:30px;color:var(--g400)">Loading…</div>';
+  try{
+    const snap=await db.collection('matches').where('users','array-contains',CU.uid).limit(50).get();
+    if(snap.empty){
+      list.innerHTML=`<div style="padding:60px 20px;text-align:center"><div style="font-size:52px;margin-bottom:14px">📭</div><div class="empty-h">No messages yet</div><div class="empty-p">Start a conversation from someone's profile</div></div>`;
+      return;
+    }
+    let arr=[];snap.forEach(d=>arr.push({id:d.id,...d.data()}));
+    arr=arr.filter(m=>{const oid=m.users.find(u=>u!==CU.uid);return !hiddenUids.has(oid);});
+    if(!arr.length){
+      list.innerHTML=`<div style="padding:60px 20px;text-align:center"><div style="font-size:52px;margin-bottom:14px">📭</div><div class="empty-h">No messages yet</div><div class="empty-p">Start a conversation from someone's profile</div></div>`;
+      return;
+    }
+    arr.sort((a,b)=>(b.lastMsgAt?.seconds||0)-(a.lastMsgAt?.seconds||0));
+    list.innerHTML='';
+    arr.forEach(m=>{
+      const oid=m.users.find(u=>u!==CU.uid);const oname=m.names?.[oid]||'User';const opic=m.pics?.[oid]||'';
+      list.innerHTML+=`<div class="conv" onclick="openChat('${oid}','${esc(oname)}','${opic}')"><div class="conv-ava">${opic?`<img src="${opic}">`:'👤'}<div class="conv-on"></div></div><div class="conv-info"><div class="conv-name">${esc(oname)}</div><div class="conv-prev">${esc(m.lastMsg||'💬')}</div></div><div class="conv-time">${timeAgo(m.lastMsgAt?.toDate())}</div></div>`;
+    });
+    document.getElementById('inboxDot').classList.remove('on');
+  }catch(e){list.innerHTML=`<div style="color:var(--rose);padding:20px;text-align:center">⚠️ ${e.message}</div>`;}
+}
+
+/* ═══ MOBILE BACK BUTTON ═══ */
+let hubStateActive=false;
+
+function pushUiState(){
+  if(hubStateActive)return;
+  hubStateActive=true;
+  history.pushState({hub:1},'');
+}
+function backUi(){
+  if(hubStateActive){hubStateActive=false;history.back();}
+  else{closeTopLayer();}
+}
+function closeTopLayer(){
+  if(document.getElementById('termsCloseBtn').classList.contains('on')&&document.getElementById('termsPage').classList.contains('on')){
+    closeTermsView();return;
+  }
+  if(document.getElementById('profSheet').classList.contains('on')){
+    document.getElementById('profSheet').classList.remove('on');currentProfUid=null;profLoadToken++;return;
+  }
+  if(document.getElementById('chatWin').classList.contains('on')){
+    document.getElementById('chatWin').classList.remove('on');chatUid=null;return;
+  }
+  if(document.getElementById('ovEdit').classList.contains('on')){
+    document.getElementById('ovEdit').classList.remove('on');return;
+  }
+  if(document.getElementById('ovFilters').classList.contains('on')){
+    document.getElementById('ovFilters').classList.remove('on');return;
+  }
+  if(document.getElementById('ovPrivacy').classList.contains('on')){
+    document.getElementById('ovPrivacy').classList.remove('on');return;
+  }
+  if(document.getElementById('ovAdminUser').classList.contains('on')){
+    document.getElementById('ovAdminUser').classList.remove('on');return;
+  }
+  if(document.getElementById('ovAdmin').classList.contains('on')){
+    document.getElementById('ovAdmin').classList.remove('on');return;
+  }
+  if(document.getElementById('ovReportUser').classList.contains('on')){
+    document.getElementById('ovReportUser').classList.remove('on');return;
+  }
+  if(document.getElementById('ovUserActions').classList.contains('on')){
+    document.getElementById('ovUserActions').classList.remove('on');return;
+  }
+  if(document.getElementById('ovAdminReports').classList.contains('on')){
+    document.getElementById('ovAdminReports').classList.remove('on');return;
+  }
+}
+window.addEventListener('popstate',()=>{
+  hubStateActive=false;
+  closeTopLayer();
+});
+
+/* ═══ CHAT ═══ */
+window.openChat=async(uid,name,pic)=>{
+  if(hiddenUids.has(uid)){st('You cannot message this user');return;}
+  await showRewardedGate(()=>_openChatNow(uid,name,pic));
+};
+async function _openChatNow(uid,name,pic){
+  chatUid=uid;chatName=name;chatPic=pic;
+  const wasProfileOpen = document.getElementById('profSheet').classList.contains('on');
+  if(wasProfileOpen){
+    document.getElementById('profSheet').classList.remove('on');
+    currentProfUid=null;
+    profLoadToken++;
+  }else{
+    pushUiState();
+  }
+  document.getElementById('chatWin').classList.add('on');
+  document.getElementById('cwName').textContent=name;
+  const av=document.getElementById('cwAva');
+  av.innerHTML=`${pic?`<img src="${pic}">`:'👤'}<div class="cw-ondot"></div>`;
+  // clear the unread badge count that the push-notification Cloud
+  // Function increments (drives the iOS app-icon number)
+  if(UD?.unreadCount){
+    try{await db.collection('users').doc(CU.uid).update({unreadCount:0});UD.unreadCount=0;}catch(e){}
+  }
+  await loadMsgs();
+}
+window.closeChat=()=>{
+  document.getElementById('chatWin').classList.remove('on');
+  chatUid=null;
+  backUi();
+};
+window.viewChatProf=()=>{if(chatUid)openProf(chatUid);};
+
+/* ═══ USER-LEVEL REPORT & BLOCK ═══ */
+window.openUserActions=(uid,name)=>{
+  uaTargetUid = uid || currentProfUid;
+  uaTargetName = name || document.getElementById('psName')?.textContent || 'this user';
+  if(!uaTargetUid){st('Error: could not identify this user');return;}
+  document.getElementById('uaName').textContent=uaTargetName;
+  const blockBtn=document.getElementById('uaBlockBtn');
+  const alreadyBlocked=myBlockedUids.has(uaTargetUid);
+  blockBtn.innerHTML = alreadyBlocked ? '🔓 <span>Unblock this user</span>' : '🚫 <span>Block this user</span>';
+  pushUiState();
+  document.getElementById('ovUserActions').classList.add('on');
+};
+window.toggleMyBlock=async()=>{
+  if(!uaTargetUid)return;
+  const alreadyBlocked=myBlockedUids.has(uaTargetUid);
+  const msg=alreadyBlocked
+    ? `Unblock ${uaTargetName}? You'll see each other again in Discover and can message each other.`
+    : `Block ${uaTargetName}? They won't be able to see your profile or message you, and you won't see them either.`;
+  if(!confirm(msg))return;
+  const blockId=`${CU.uid}_${uaTargetUid}`;
+  try{
+    if(alreadyBlocked){
+      await db.collection('blocks').doc(blockId).delete();
+      myBlockedUids.delete(uaTargetUid);
+      st('🔓 User unblocked');
+    }else{
+      await db.collection('blocks').doc(blockId).set({blocker:CU.uid,blocked:uaTargetUid,createdAt:firebase.firestore.Timestamp.now()});
+      myBlockedUids.add(uaTargetUid);
+      st('🚫 User blocked');
+    }
+    hiddenUids=new Set([...myBlockedUids,...blockedByUids]);
+    closeOv('ovUserActions');
+    // if a chat/profile with this user happens to be open, close it
+    if(chatUid===uaTargetUid && !alreadyBlocked){closeChat();}
+    if(currentProfUid===uaTargetUid && !alreadyBlocked){document.getElementById('profSheet').classList.remove('on');currentProfUid=null;profLoadToken++;}
+    await loadUsers();
+    if(document.getElementById('scrChats').classList.contains('on'))loadInboxScreen();
+  }catch(e){st('Error: '+e.message);}
+};
+window.openReportUser=()=>{
+  if(!uaTargetUid)return;
+  document.querySelectorAll('input[name="reportReason"]').forEach(r=>r.checked=false);
+  document.querySelectorAll('#reportReasons .reason-opt').forEach(o=>o.classList.remove('on'));
+  document.getElementById('reportNote').value='';
+  document.getElementById('reportSub').textContent=`Why are you reporting ${uaTargetName}?`;
+  closeOv('ovUserActions');
+  pushUiState();
+  document.getElementById('ovReportUser').classList.add('on');
+};
+document.querySelectorAll('#reportReasons .reason-opt').forEach(opt=>{
+  opt.addEventListener('click',()=>{
+    document.querySelectorAll('#reportReasons .reason-opt').forEach(o=>o.classList.remove('on'));
+    opt.classList.add('on');
+    opt.querySelector('input').checked=true;
+  });
+});
+window.submitReport=async()=>{
+  if(!uaTargetUid)return;
+  const reasonEl=document.querySelector('input[name="reportReason"]:checked');
+  if(!reasonEl){st('⚠️ Please choose a reason');return;}
+  const note=document.getElementById('reportNote').value.trim();
+  try{
+    await db.collection('reports').add({
+      reporterUid:CU.uid,reporterName:UD?.name||'',
+      reportedUid:uaTargetUid,reportedName:uaTargetName,
+      reason:reasonEl.value,note,
+      status:'open',createdAt:firebase.firestore.Timestamp.now()
+    });
+    closeOv('ovReportUser');
+    st('✅ Report submitted — thank you for helping keep the community safe');
+  }catch(e){st('Error: '+e.message);}
+};
+async function loadMsgs(){
+  const box=document.getElementById('cwMsgs');
+  box.innerHTML='<div style="text-align:center;padding:20px;color:var(--g400)">⏳</div>';
+  const mid=[CU.uid,chatUid].sort().join('_');
+  try{
+    const snap=await db.collection('messages').where('matchId','==',mid).limit(100).get();
+    let arr=[];snap.forEach(d=>arr.push({id:d.id,...d.data()}));
+    arr.sort((a,b)=>(a.createdAt?.seconds||0)-(b.createdAt?.seconds||0));
+    box.innerHTML='';
+    if(!arr.length){box.innerHTML=`<div style="text-align:center;padding:30px;color:var(--g400);font-size:14px">💬 Say hello!</div>`;box.scrollTop=box.scrollHeight;return;}
+    arr.forEach(m=>{const me=m.from===CU.uid;box.innerHTML+=`<div style="display:flex;flex-direction:column;align-items:${me?'flex-end':'flex-start'};margin-bottom:2px"><div class="bbl ${me?'bbl-me':'bbl-them'}">${esc(m.content)}</div><div class="bbl-time" style="padding:0 4px">${timeAgo(m.createdAt?.toDate())}</div></div>`;});
+    box.scrollTop=box.scrollHeight;
+
+    const unseen=arr.filter(m=>m.from!==CU.uid&&!m.seen);
+    if(unseen.length){
+      for(const m of unseen){
+        try{await db.collection('messages').doc(m.id).set({seen:true},{merge:true});}catch(e){}
+      }
+    }
+  }catch(e){box.innerHTML=`<div style="padding:30px;text-align:center;color:rgba(255,255,255,.3)">🔒 Could not load</div>`;}
+}
+window.sendMsg=async()=>{
+  const ta=document.getElementById('cwTa');const txt=ta.value.trim();
+  if(!txt||!chatUid)return;
+  if(hiddenUids.has(chatUid)){st('You cannot message this user');return;}
+  const btn=document.querySelector('.cw-send');if(btn)btn.disabled=true;
+  ta.value='';grow(ta);
+  const mid=[CU.uid,chatUid].sort().join('_');
+  try{
+    const mref=db.collection('matches').doc(mid);const msnap=await mref.get();
+    if(!msnap.exists)await mref.set({users:[CU.uid,chatUid],names:{[CU.uid]:UD?.name||'',[chatUid]:chatName||''},pics:{[CU.uid]:UD?.pic||'',[chatUid]:chatPic||''},createdAt:firebase.firestore.Timestamp.now(),lastMsg:txt,lastMsgAt:firebase.firestore.Timestamp.now()});
+    await db.collection('messages').add({matchId:mid,from:CU.uid,to:chatUid,senderName:UD?.name||'',content:txt,createdAt:firebase.firestore.Timestamp.now()});
+    await mref.set({lastMsg:txt,lastMsgAt:firebase.firestore.Timestamp.now()},{merge:true});
+    await loadMsgs();
+  }catch(e){ta.value=txt;grow(ta);st('⚠️ '+e.message);}
+  if(btn)btn.disabled=false;
+};
+window.grow=el=>{el.style.height='auto';el.style.height=Math.min(el.scrollHeight,90)+'px';};
+window.cwKey=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}};
+
+/* ═══ EDIT PROFILE ═══ */
+window.openEdit=(isNew=false)=>{
+  const isReg=!!(UD?.gender&&UD?.dob);
+  editPhotos = normalizePhotoList(UD).map(p=>({...p}));
+  renderPhotoGrid();
+  const statusBanner=document.getElementById('photoStatusBanner');
+  const pendingCount=editPhotos.filter(p=>p.status==='pending').length;
+  if(UD?.lastPhotoRejectedAt){
+    statusBanner.className='photo-status-rejected';statusBanner.style.display='block';
+    statusBanner.innerHTML='🚫 One of your recent photos didn\'t meet our guidelines and was removed. Please make sure any new photos are appropriate and genuinely of you. <button type="button" onclick="dismissRejectionNotice()" style="margin-left:6px;text-decoration:underline;background:none;border:none;color:inherit;font-weight:700;font-size:inherit">Got it</button>';
+  }else if(pendingCount>0){
+    statusBanner.className='photo-status-pending';statusBanner.style.display='block';
+    statusBanner.textContent=`⏳ ${pendingCount} photo${pendingCount>1?'s are':' is'} pending admin review — only you can see ${pendingCount>1?'them':'it'} right now.`;
+  }else{
+    statusBanner.style.display='none';
+  }
+  if(UD){
+    document.getElementById('eName').value=UD.name||'';
+    document.getElementById('eBio').value=UD.bio||'';
+    if(UD.country)document.getElementById('eCountry').value=UD.country;
+    if(UD.lang)document.getElementById('eLang').value=UD.lang;
+    if(UD.status)document.getElementById('eStatus').value=UD.status;
+    if(UD.looking)document.getElementById('eLooking').value=UD.looking;
+    if(UD.zodiac)document.getElementById('eZodiac').value=UD.zodiac;
+    if(UD.education)document.getElementById('eEducation').value=UD.education;
+    if(UD.family)document.getElementById('eFamily').value=UD.family;
+    if(UD.commStyle)document.getElementById('eCommStyle').value=UD.commStyle;
+    if(UD.loveStyle)document.getElementById('eLoveStyle').value=UD.loveStyle;
+    if(UD.pets)document.getElementById('ePets').value=UD.pets;
+    if(UD.drinking)document.getElementById('eDrinking').value=UD.drinking;
+    if(UD.smoking)document.getElementById('eSmoking').value=UD.smoking;
+    if(UD.workout)document.getElementById('eWorkout').value=UD.workout;
+    if(UD.social)document.getElementById('eSocial').value=UD.social;
+    if(UD.interests)document.querySelectorAll('.itag').forEach(t=>t.classList.toggle('on',UD.interests.includes(t.textContent)));
+    if(isReg){
+      document.getElementById('genderPair').style.display='none';document.getElementById('genderLocked').style.display='flex';document.getElementById('genderLockedVal').textContent=UD.gender==='female'?'👩 Woman':'👨 Man';document.getElementById('eGender').value=UD.gender;
+      document.getElementById('eDob').style.display='none';document.getElementById('dobLocked').style.display='flex';document.getElementById('dobLockedVal').textContent=`${calcAge(UD.dob)} yrs (${UD.dob})`;
+    }else{
+      document.getElementById('genderPair').style.display='flex';document.getElementById('genderLocked').style.display='none';if(UD.gender)pickG(UD.gender);
+      document.getElementById('eDob').style.display='block';document.getElementById('dobLocked').style.display='none';document.getElementById('eDob').value=UD.dob||'';
+    }
+  }else{
+    document.getElementById('genderPair').style.display='flex';document.getElementById('genderLocked').style.display='none';
+    document.getElementById('eDob').style.display='block';document.getElementById('dobLocked').style.display='none';
+  }
+  const maxD=new Date();maxD.setFullYear(maxD.getFullYear()-18);
+  document.getElementById('eDob').max=maxD.toISOString().slice(0,10);
+  document.getElementById('editH').textContent=isNew?'Welcome! Complete your profile 👋':'Edit Profile';
+  document.getElementById('editS').textContent=isNew?'Add your info to get started':'Make your profile more appealing';
+  document.getElementById('delAccBtn').style.display=isNew?'none':'block';
+  document.getElementById('cancelEditBtn').style.display=isNew?'none':'block';
+  pushUiState();
+  document.getElementById('ovEdit').classList.add('on');
+};
+window.pickG=g=>{document.getElementById('gM').classList.toggle('on',g==='male');document.getElementById('gF').classList.toggle('on',g==='female');document.getElementById('eGender').value=g;};
+// each entry in editPhotos is {url, status:'pending'|'approved'}
+function renderPhotoGrid(){
+  const grid=document.getElementById('photoGrid');
+  let html='';
+  editPhotos.forEach((p,i)=>{
+    const statusBadge = p.status==='approved'
+      ? '<span class="ph-status approved">✅ Approved</span>'
+      : '<span class="ph-status pending">⏳ Pending</span>';
+    const bottomTag = i===0
+      ? '<span class="ph-main-tag">⭐ Profile Photo</span>'
+      : `<button type="button" class="ph-set-main" onclick="setMainPhoto(${i})">Set as Profile Photo</button>`;
+    html+=`<div class="photo-slot"><img src="${p.url}">${statusBadge}${bottomTag}<button type="button" class="ph-rm" onclick="removePhoto(${i})">✕</button></div>`;
+  });
+  if(editPhotos.length<5){
+    html+=`<div class="photo-slot add-slot" onclick="addPhotoSlotClick()"><span style="font-size:22px">📷</span><span>Add Photo</span></div>`;
+  }
+  grid.innerHTML=html;
+}
+window.dismissRejectionNotice=async()=>{
+  document.getElementById('photoStatusBanner').style.display='none';
+  try{await db.collection('users').doc(CU.uid).update({lastPhotoRejectedAt:firebase.firestore.FieldValue.delete()});UD.lastPhotoRejectedAt=null;}catch(e){}
+};
+window.addPhotoSlotClick=()=>{
+  if(editPhotos.length>=5){st('Maximum of 5 photos');return;}
+  document.getElementById('photoFileInput').click();
+};
+window.removePhoto=async idx=>{
+  const [removed]=editPhotos.splice(idx,1);
+  renderPhotoGrid();
+  if(removed?.path){try{await storage.ref(removed.path).delete();}catch(e){}}
+};
+// lets the user pick any of their existing photos to become the main
+// profile photo, without needing to re-upload anything
+window.setMainPhoto=idx=>{
+  if(idx<=0||idx>=editPhotos.length)return;
+  const [chosen]=editPhotos.splice(idx,1);
+  editPhotos.unshift(chosen);
+  renderPhotoGrid();
+};
+window.handlePhotoFile=async inp=>{
+  const f=inp.files[0];if(!f)return;
+  if(editPhotos.length>=5){st('Maximum of 5 photos');inp.value='';return;}
+  const loadEl=document.getElementById('picLoad');
+  loadEl.style.display='block';loadEl.textContent='⏳ Compressing…';
+  document.getElementById('saveProfBtn').disabled=true;
+  try{
+    // compress to WebP, targeting ~250KB (capped between 100–270KB) so
+    // each photo stays cheap to store and fast to load, while keeping
+    // dimensions large enough to look sharp in the app
+    const blob=await compressImage(f,{startMaxDim:1000,minMaxDim:480,targetKB:250,minQuality:0.4});
+    loadEl.textContent='⏳ Uploading…';
+    const {url,path}=await uploadPhotoToStorage(blob,CU.uid);
+    // every newly-added photo starts as its own independent pending
+    // review — it does not inherit approval from any other photo
+    editPhotos.push({url,path,status:'pending'});
+    renderPhotoGrid();
+  }catch(e){st('Image error: '+e.message);}
+  loadEl.style.display='none';document.getElementById('saveProfBtn').disabled=false;
+  inp.value='';
+};
+window.saveProfile=async()=>{
+  const name=document.getElementById('eName').value.trim();
+  const bio=document.getElementById('eBio').value.trim();
+  const photos=editPhotos.slice(0,5);
+  const pic=photos.find(p=>p.status==='approved')?.url||'';
+  const country=document.getElementById('eCountry').value;
+  const lang=document.getElementById('eLang').value;
+  const status=document.getElementById('eStatus').value;
+  const looking=document.getElementById('eLooking').value;
+  const zodiac=document.getElementById('eZodiac').value;
+  const education=document.getElementById('eEducation').value;
+  const family=document.getElementById('eFamily').value;
+  const commStyle=document.getElementById('eCommStyle').value;
+  const loveStyle=document.getElementById('eLoveStyle').value;
+  const pets=document.getElementById('ePets').value;
+  const drinking=document.getElementById('eDrinking').value;
+  const smoking=document.getElementById('eSmoking').value;
+  const workout=document.getElementById('eWorkout').value;
+  const social=document.getElementById('eSocial').value;
+  const interests=[...document.querySelectorAll('.itag.on')].map(t=>t.textContent);
+  const isReg=!!(UD?.gender&&UD?.dob);
+  const gender=isReg?UD.gender:document.getElementById('eGender').value;
+  const dob=isReg?UD.dob:document.getElementById('eDob').value;
+  if(!name||!gender||!dob)return st('⚠️ Please complete the required fields');
+  if(!isReg&&calcAge(dob)<18)return st('⚠️ You must be 18 or older to use this app');
+  document.getElementById('saveProfBtn').disabled=true;
+  try{
+    const prevUrls=normalizePhotoList(UD).map(p=>p.url);
+    const newUrls=photos.map(p=>p.url);
+    const photosChanged=JSON.stringify(prevUrls)!==JSON.stringify(newUrls);
+    const data={email:CU.email,name,pic,photos,gender,dob,bio,country,lang,status,looking,zodiac,education,family,commStyle,loveStyle,pets,drinking,smoking,workout,social,interests,isAdmin,createdAt:UD?.createdAt||firebase.firestore.Timestamp.now()};
+    if(photosChanged)data.photoUpdatedAt=firebase.firestore.Timestamp.now();
+    await db.collection('users').doc(CU.uid).set(data,{merge:true});
+    UD={...UD,...data};closeOv('ovEdit');updateProfUI();await loadUsers();
+    const hasPending=photos.some(p=>p.status==='pending');
+    st(hasPending?'✅ Profile saved — new photos are pending admin review':'✅ Profile saved');
+  }catch(e){st('Error: '+e.message);}
+  document.getElementById('saveProfBtn').disabled=false;
+};
+window.deleteAcc=async()=>{
+  if(!confirm('Delete your account permanently?'))return;
+  try{
+    await deleteUserPhotoFiles(normalizePhotoList(UD));
+    await db.collection('users').doc(CU.uid).delete();
+    auth.signOut().then(()=>location.reload());
+  }catch(e){st('Error: '+e.message);}
+};
+
+/* ═══ ADMIN PANEL ═══ */
+let adminUsers=[],adminFilter='all';
+function refreshAdminStats(){
+  document.getElementById('adTotalN').textContent=adminUsers.length;
+  document.getElementById('adNewN').textContent=adminUsers.filter(u=>u.isNew).length;
+  document.getElementById('adPendingN').textContent=adminUsers.filter(u=>u.needsReview).length;
+}
+window.openAdminPanel=async()=>{
+  if(!isAdmin)return;
+  pushUiState();
+  document.getElementById('ovAdmin').classList.add('on');
+  document.getElementById('adminList').innerHTML='<div style="text-align:center;padding:40px;color:var(--g400)">⏳ Loading…</div>';
+  try{
+    adminUsers=[];
+    const now=Date.now();
+    (await db.collection('users').limit(1000).get()).forEach(d=>{
+      const u=d.data();
+      const createdMs=u.createdAt?.seconds?u.createdAt.seconds*1000:0;
+      const photoMs=u.photoUpdatedAt?.seconds?u.photoUpdatedAt.seconds*1000:0;
+      const photosNorm=normalizePhotoList(u);
+      adminUsers.push({
+        id:d.id,...u,
+        isNew:createdMs && (now-createdMs)<48*3600*1000,
+        hasNewPhoto:photoMs && (now-photoMs)<48*3600*1000,
+        needsReview: photosNorm.some(p=>p.status==='pending')
+      });
+    });
+    adminUsers.sort((a,b)=>{
+      // pending-review users bubble to the top so admins see them first
+      if(a.needsReview!==b.needsReview)return a.needsReview?-1:1;
+      return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0);
+    });
+    refreshAdminStats();
+    renderAdminList();
+  }catch(e){
+    document.getElementById('adminList').innerHTML=`<div style="text-align:center;padding:30px;color:var(--g400)">Error: ${esc(e.message)}</div>`;
+  }
+};
+window.setAdminFilter=f=>{
+  adminFilter=f;
+  document.getElementById('adTabAll').classList.toggle('on',f==='all');
+  document.getElementById('adTabPending').classList.toggle('on',f==='pending');
+  document.getElementById('adTabNew').classList.toggle('on',f==='new');
+  renderAdminList();
+};
+function renderAdminList(){
+  const listEl=document.getElementById('adminList');
+  let list=adminUsers;
+  if(adminFilter==='new')list=list.filter(u=>u.isNew);
+  if(adminFilter==='pending')list=list.filter(u=>u.needsReview);
+  if(!list.length){listEl.innerHTML='<div style="text-align:center;padding:30px;color:var(--g400)">No users to show</div>';return;}
+  listEl.innerHTML=list.map(u=>{
+    const age=calcAge(u.dob);
+    // admins always see the raw photo (approved or not) so they can review it
+    const photo=normalizePhotoList(u)[0]?.url||'';
+    const avatar=photo?`<img class="admin-uava" src="${photo}">`:`<div class="admin-uava" style="display:flex;align-items:center;justify-content:center;font-size:20px">${u.gender==='female'?'👩':'👨'}</div>`;
+    const badges=`${u.blocked?'<span class="admin-badge" style="background:#111118">BLOCKED</span>':''}${u.needsReview?'<span class="admin-badge newphoto">PENDING REVIEW</span>':''}${u.isNew?'<span class="admin-badge new">NEW</span>':''}${u.isAdmin?'<span class="admin-badge" style="background:#7C3AED">ADMIN</span>':''}`;
+    return `<div class="admin-urow" onclick="openAdminUserDetail('${u.id}')">
+      ${avatar}
+      <div class="admin-uinfo">
+        <div class="admin-uname">${esc(u.name||'(no name)')}${age?` · ${age}`:''} ${badges}</div>
+        <div class="admin-uemail">${esc(u.email||'')}</div>
+      </div>
+      <span class="srow-arr">›</span>
+    </div>`;
+  }).join('');
+}
+let adminSelectedUid=null;
+window.openAdminUserDetail=uid=>{
+  const u=adminUsers.find(x=>x.id===uid);
+  if(!u)return;
+  adminSelectedUid=uid;
+  pushUiState();
+  document.getElementById('adUName').textContent=u.name||'(no name)';
+  document.getElementById('adUEmail').textContent=u.email||'';
+  renderAdminPhotoGrid(u);
+  const age=calcAge(u.dob);
+  document.getElementById('adUInfo').innerHTML=`
+    ${age?`<div><strong>Age:</strong> ${age}</div>`:''}
+    ${u.gender?`<div><strong>Gender:</strong> ${u.gender==='female'?'Woman':'Man'}</div>`:''}
+    ${u.country&&COUNTRIES[u.country]?`<div><strong>Country:</strong> ${COUNTRIES[u.country]}</div>`:''}
+    ${u.bio?`<div style="margin-top:8px"><strong>Bio:</strong> ${esc(u.bio)}</div>`:''}
+    ${u.isNew?'<div style="margin-top:8px;color:#10B981;font-weight:700">🆕 Joined within the last 48 hours</div>':''}
+  `;
+  const banner=document.getElementById('adUStatusBanner');
+  if(u.blocked){
+    banner.className='';banner.style.cssText='background:#111118;color:#fff;font-size:12px;font-weight:700;border-radius:12px;padding:9px 12px;margin-bottom:12px;text-align:center;display:block';
+    banner.textContent='🔒 This user is blocked and cannot log in.';
+  }else{
+    banner.style.display='none';
+  }
+  const blockBtn=document.getElementById('adUBlockBtn');
+  blockBtn.textContent = u.blocked ? '🔓 Unblock User' : '🔒 Block User';
+  blockBtn.style.background = u.blocked ? '#6B7280' : '#111118';
+  document.getElementById('ovAdminUser').classList.add('on');
+};
+function renderAdminPhotoGrid(u){
+  const photos=normalizePhotoList(u);
+  const el=document.getElementById('adUPhotos');
+  if(!photos.length){
+    el.innerHTML='<div style="grid-column:1/-1;text-align:center;color:var(--g400);padding:16px;font-size:13px">No photos uploaded</div>';
+    return;
+  }
+  el.innerHTML=photos.map((p,i)=>`
+    <div class="admin-photo-cell">
+      <img src="${p.url}">
+      <span class="ph-status ${p.status}">${p.status==='approved'?'✅ Approved':'⏳ Pending'}</span>
+      <div class="admin-photo-actions">
+        ${p.status!=='approved'?`<button class="ap-approve" onclick="adminApproveOnePhoto(${i})">✅</button>`:''}
+        <button class="ap-reject" onclick="adminRejectOnePhoto(${i})">🚫</button>
+      </div>
+    </div>`).join('');
+}
+window.adminApproveOnePhoto=async idx=>{
+  const u=adminUsers.find(x=>x.id===adminSelectedUid);
+  if(!u)return;
+  const photos=normalizePhotoList(u);
+  if(!photos[idx])return;
+  photos[idx]={...photos[idx],status:'approved'};
+  const pic=photos.find(p=>p.status==='approved')?.url||'';
+  try{
+    await db.collection('users').doc(adminSelectedUid).update({photos,pic});
+    u.photos=photos;u.pic=pic;u.needsReview=photos.some(p=>p.status==='pending');
+    refreshAdminStats();renderAdminList();renderAdminPhotoGrid(u);
+    st('✅ Photo approved — now visible to other members');
+    await loadUsers();
+  }catch(e){st('Error: '+e.message);}
+};
+window.adminRejectOnePhoto=async idx=>{
+  const u=adminUsers.find(x=>x.id===adminSelectedUid);
+  if(!u)return;
+  const photos=normalizePhotoList(u);
+  if(!photos[idx])return;
+  if(!confirm('Reject and immediately remove this photo? The user will need to upload a different one.'))return;
+  const [removed]=photos.splice(idx,1);
+  const pic=photos.find(p=>p.status==='approved')?.url||'';
+  try{
+    await db.collection('users').doc(adminSelectedUid).update({
+      photos,pic,lastPhotoRejectedAt:firebase.firestore.Timestamp.now()
+    });
+    if(removed?.path){try{await storage.ref(removed.path).delete();}catch(e){}}
+    u.photos=photos;u.pic=pic;u.needsReview=photos.some(p=>p.status==='pending');
+    refreshAdminStats();renderAdminList();renderAdminPhotoGrid(u);
+    st('🚫 Photo rejected and removed');
+    await loadUsers();
+  }catch(e){st('Error: '+e.message);}
+};
+window.adminToggleBlock=async()=>{
+  if(!adminSelectedUid)return;
+  const u=adminUsers.find(x=>x.id===adminSelectedUid);
+  if(!u)return;
+  const nowBlocking=!u.blocked;
+  const msg=nowBlocking
+    ? `Block ${u.name||'this user'}? They will be signed out immediately and won't be able to log back in until unblocked.`
+    : `Unblock ${u.name||'this user'}? They will be able to log in again.`;
+  if(!confirm(msg))return;
+  try{
+    const upd={blocked:nowBlocking};
+    if(nowBlocking)upd.blockedAt=firebase.firestore.Timestamp.now();
+    await db.collection('users').doc(adminSelectedUid).update(upd);
+    u.blocked=nowBlocking;
+    renderAdminList();
+    st(nowBlocking?'🔒 User blocked':'🔓 User unblocked');
+    openAdminUserDetail(adminSelectedUid);
+    await loadUsers();
+  }catch(e){st('Error: '+e.message);}
+};
+window.adminDeleteUser=async()=>{
+  if(!adminSelectedUid)return;
+  const u=adminUsers.find(x=>x.id===adminSelectedUid);
+  if(!confirm(`Permanently delete ${u?.name||'this user'} and all of their photos? This cannot be undone.`))return;
+  try{
+    await deleteUserPhotoFiles(normalizePhotoList(u));
+    await db.collection('users').doc(adminSelectedUid).delete();
+    adminUsers=adminUsers.filter(x=>x.id!==adminSelectedUid);
+    refreshAdminStats();
+    closeOv('ovAdminUser');
+    renderAdminList();
+    st('✅ User deleted');
+    await loadUsers();
+  }catch(e){st('Error: '+e.message);}
+};
+window.openAdminReports=async()=>{
+  if(!isAdmin)return;
+  pushUiState();
+  document.getElementById('ovAdminReports').classList.add('on');
+  const listEl=document.getElementById('adminReportsList');
+  listEl.innerHTML='<div style="text-align:center;padding:40px;color:var(--g400)">⏳ Loading…</div>';
+  try{
+    // ordered client-side (not queried) by status so we don't require a
+    // composite Firestore index on (status, createdAt)
+    const snap=await db.collection('reports').orderBy('createdAt','desc').limit(200).get();
+    const reports=[];
+    snap.forEach(d=>reports.push({id:d.id,...d.data()}));
+    const openReports=reports.filter(r=>(r.status||'open')==='open');
+    if(!openReports.length){listEl.innerHTML='<div style="text-align:center;padding:30px;color:var(--g400)">✅ No open reports — all caught up</div>';return;}
+    listEl.innerHTML=openReports.map(r=>`
+      <div class="admin-urow" style="align-items:flex-start;cursor:default;flex-direction:column;gap:0">
+        <div style="width:100%">
+          <div class="admin-uname">${esc(r.reportedName||'Unknown user')} <span class="admin-badge" style="background:#EF4444">${esc(r.reason||'Other')}</span></div>
+          <div class="admin-uemail">Reported by ${esc(r.reporterName||'a member')} · ${timeAgo(r.createdAt?.toDate())}</div>
+          ${r.note?`<div style="font-size:12px;color:var(--g600);margin-top:4px">${esc(r.note)}</div>`:''}
+        </div>
+        <div style="display:flex;gap:8px;margin-top:9px;width:100%">
+          <button class="btn-s" style="flex:1;padding:8px;font-size:12px" onclick="adminViewReportedUser('${r.reportedUid}')">👁️ View Profile</button>
+          <button class="btn-s" style="flex:1;padding:8px;font-size:12px;background:#111118;color:#fff" onclick="adminQuickAction('${r.id}','${r.reportedUid}','${esc(r.reportedName||'this user')}','block')">🔒 Block</button>
+          <button class="btn-s" style="flex:1;padding:8px;font-size:12px;background:#EF4444;color:#fff" onclick="adminQuickAction('${r.id}','${r.reportedUid}','${esc(r.reportedName||'this user')}','delete')">🗑️ Delete</button>
+        </div>
+        <button class="btn-s" style="width:100%;margin-top:6px;padding:6px;font-size:11px;color:var(--g400)" onclick="adminDismissReport('${r.id}')">Dismiss report (not a violation)</button>
+      </div>`).join('');
+  }catch(e){
+    listEl.innerHTML=`<div style="text-align:center;padding:30px;color:var(--g400)">Error: ${esc(e.message)}</div>`;
+  }
+};
+// quick moderation actions directly from a report row — used when the
+// admin can already tell it's a clear violation without opening the
+// full profile detail first
+window.adminQuickAction=async(reportId,uid,name,action)=>{
+  if(!uid)return;
+  const confirmMsg = action==='delete'
+    ? `Permanently delete ${name} and all of their photos? This cannot be undone.`
+    : `Block ${name}? They'll be signed out and won't be able to log back in.`;
+  if(!confirm(confirmMsg))return;
+  try{
+    if(action==='delete'){
+      let existing=adminUsers.find(x=>x.id===uid);
+      if(!existing){
+        try{const snap=await db.collection('users').doc(uid).get();if(snap.exists)existing=snap.data();}catch(e){}
+      }
+      await deleteUserPhotoFiles(normalizePhotoList(existing));
+      await db.collection('users').doc(uid).delete();
+    }else{
+      await db.collection('users').doc(uid).update({blocked:true,blockedAt:firebase.firestore.Timestamp.now()});
+    }
+    if(reportId)await db.collection('reports').doc(reportId).update({status:'resolved',resolvedAction:action,resolvedAt:firebase.firestore.Timestamp.now()});
+    adminUsers=adminUsers.filter(x=>x.id!==uid);
+    st(action==='delete'?'✅ User deleted':'🔒 User blocked');
+    await loadUsers();
+    openAdminReports();
+  }catch(e){st('Error: '+e.message);}
+};
+window.adminDismissReport=async reportId=>{
+  if(!reportId)return;
+  if(!confirm('Dismiss this report as not a violation?'))return;
+  try{
+    await db.collection('reports').doc(reportId).update({status:'dismissed',resolvedAt:firebase.firestore.Timestamp.now()});
+    st('Report dismissed');
+    openAdminReports();
+  }catch(e){st('Error: '+e.message);}
+};
+window.adminViewReportedUser=async uid=>{
+  if(!uid)return;
+  try{
+    let u=adminUsers.find(x=>x.id===uid);
+    if(!u){
+      const snap=await db.collection('users').doc(uid).get();
+      if(!snap.exists){st('This user no longer exists');return;}
+      const data=snap.data();
+      const now=Date.now();
+      const createdMs=data.createdAt?.seconds?data.createdAt.seconds*1000:0;
+      const photosNorm=normalizePhotoList(data);
+      u={id:uid,...data,isNew:createdMs&&(now-createdMs)<48*3600*1000,needsReview:photosNorm.some(p=>p.status==='pending')};
+      adminUsers.push(u);
+    }
+    closeOv('ovAdminReports');
+    openAdminUserDetail(uid);
+  }catch(e){st('Error: '+e.message);}
+};
+
+/* ═══ FILTERS ═══ */
+window.openFilters=()=>{
+  pickFG(fGender);document.getElementById('rMin').value=fAgeMin;document.getElementById('rMax').value=fAgeMax;
+  document.getElementById('fCountry').value=fCountry;document.getElementById('fStatus').value=fStatus;document.getElementById('fLang').value=fLang;
+  updAge();pushUiState();document.getElementById('ovFilters').classList.add('on');
+};
+window.pickFG=g=>{['All','Male','Female'].forEach(x=>document.getElementById('fg'+x).classList.toggle('on',g===x.toLowerCase()||(g==='all'&&x==='All')));document.getElementById('fgVal').value=g;};
+window.updAge=()=>{const a=+document.getElementById('rMin').value,b=+document.getElementById('rMax').value;document.getElementById('ageDisp').textContent=`${Math.min(a,b)} – ${Math.max(a,b)}`;};
+window.applyFilters=()=>{
+  fGender=document.getElementById('fgVal').value;
+  fAgeMin=Math.min(+document.getElementById('rMin').value,+document.getElementById('rMax').value);
+  fAgeMax=Math.max(+document.getElementById('rMin').value,+document.getElementById('rMax').value);
+  fCountry=document.getElementById('fCountry').value;fStatus=document.getElementById('fStatus').value;fLang=document.getElementById('fLang').value;
+  try{localStorage.setItem('fGender',fGender);localStorage.setItem('fAgeMin',fAgeMin);localStorage.setItem('fAgeMax',fAgeMax);localStorage.setItem('fCountry',fCountry);localStorage.setItem('fStatus',fStatus);localStorage.setItem('fLang',fLang);}catch(e){}
+  closeOv('ovFilters');currentPage=1;renderGrid();st('✅ Filters applied');
+};
+
+/* ═══ PROFILE UI ═══ */
+function updateProfUI(){
+  if(!UD)return;
+  const age=calcAge(UD.dob);
+  const isFemale=UD.gender==='female';
+  // on your OWN "Me" page you always see your own main photo, even while
+  // it's still pending admin review — approval only controls whether
+  // OTHER members can see it, never whether you can see it yourself
+  const myMainPhoto=normalizePhotoList(UD)[0]?.url||'';
+  if(myMainPhoto){
+    document.getElementById('myHeroPhoto').src=myMainPhoto;
+    document.getElementById('myHeroPhoto').style.display='block';
+    document.getElementById('myHeroPh').style.display='none';
+  }else{
+    document.getElementById('myHeroPhoto').style.display='none';
+    document.getElementById('myHeroPh').style.display='flex';
+    document.getElementById('myHeroPh').textContent=isFemale?'👩':'👨';
+  }
+  document.getElementById('myName').textContent=UD.name||'Your Profile';
+  const ch=document.getElementById('myChips');ch.innerHTML='';
+  if(age){const c=document.createElement('span');c.className='my-hero-chip chip-age';c.textContent=age+' yrs';ch.appendChild(c);}
+  const gc=document.createElement('span');gc.className='my-hero-chip chip-gender';gc.textContent=isFemale?'👩 Woman':'👨 Man';ch.appendChild(gc);
+  if(UD.country&&COUNTRIES[UD.country]){const cc=document.createElement('span');cc.className='my-hero-chip chip-country';cc.textContent=COUNTRIES[UD.country];ch.appendChild(cc);}
+  const myPendingCount=normalizePhotoList(UD).filter(p=>p.status==='pending').length;
+  if(myPendingCount>0){const pc=document.createElement('span');pc.className='my-hero-chip';pc.style.background='rgba(245,158,11,.85)';pc.textContent=`⏳ ${myPendingCount} photo${myPendingCount>1?'s':''} pending review`;ch.appendChild(pc);}
+  document.getElementById('myBio').textContent=UD.bio||"You haven't written a bio yet…";
+  const tw=document.getElementById('myTags');tw.innerHTML='';
+  if(UD.status&&STATUSES[UD.status]){const s=document.createElement('span');s.className='my-tag';s.textContent=STATUSES[UD.status];tw.appendChild(s);}
+  const myExtraMap=[['lang',LANGS],['looking',LOOKING],['zodiac',ZODIAC],['education',EDUCATION],['family',FAMILY],['commStyle',COMMSTYLE],['loveStyle',LOVESTYLE],['pets',PETS],['drinking',DRINKING],['smoking',SMOKING],['workout',WORKOUT],['social',SOCIAL]];
+  myExtraMap.forEach(([k,m])=>{
+    if(UD[k]&&m[UD[k]]){const s=document.createElement('span');s.className='my-tag';s.textContent=`${FIELD_LABELS[k]}: ${m[UD[k]]}`;tw.appendChild(s);}
+  });
+  (UD.interests||[]).forEach(i=>{const s=document.createElement('span');s.className='my-tag';s.textContent=i;tw.appendChild(s);});
+}
+
+/* ═══ PUSH NOTIFICATIONS (Capacitor) ═══
+   Wrapped defensively: on plain web (no Capacitor) this silently no-ops.
+   In the Android build, @capacitor/push-notifications + Firebase Cloud
+   Messaging deliver the token below; save it to Firestore so a backend
+   function (or Firebase console test message) can target this device.
+
+   IMPORTANT: registering the token here is only HALF of push
+   notifications. Actually SENDING a push when someone gets a new
+   message has to happen from a trusted backend (a Firebase Cloud
+   Function that triggers on new `messages` docs and calls the FCM
+   Admin SDK) — a webpage can never send push notifications to another
+   device by itself, for the same reason it can't read other people's
+   private data. See the companion `functions/index.js` file. */
+async function initPushNotifications(){
+  try{
+    if(!window.Capacitor?.isNativePlatform?.())return;
+    const {PushNotifications,LocalNotifications}=window.Capacitor.Plugins;
+    if(!PushNotifications)return;
+    let perm=await PushNotifications.checkPermissions();
+    if(perm.receive!=='granted')perm=await PushNotifications.requestPermissions();
+    if(perm.receive!=='granted')return;
+    await PushNotifications.register();
+    PushNotifications.addListener('registration',async token=>{
+      try{await db.collection('users').doc(CU.uid).set({fcmToken:token.value},{merge:true});}catch(e){}
+    });
+    PushNotifications.addListener('registrationError',err=>console.error('Push registration error',err));
+
+    // also ask for local-notification permission, so we can pop a real
+    // system notification (with sound + the app badge) even while the
+    // app is open in the foreground — FCM alone only auto-shows a tray
+    // notification when the app is backgrounded/killed
+    if(LocalNotifications){
+      try{await LocalNotifications.requestPermissions();}catch(e){}
+    }
+
+    PushNotifications.addListener('pushNotificationReceived',async n=>{
+      st(n.title||'New notification');
+      if(LocalNotifications){
+        try{
+          await LocalNotifications.schedule({notifications:[{
+            id:Math.floor(Math.random()*1000000),
+            title:n.title||'New message',
+            body:n.body||'',
+            extra:n.data||{}
+          }]});
+        }catch(e){}
+      }
+    });
+    PushNotifications.addListener('pushNotificationActionPerformed',action=>{
+      const uid=action.notification?.data?.chatUid;
+      if(uid)openChat(uid,action.notification?.data?.chatName||'',action.notification?.data?.chatPic||'');
+    });
+    if(LocalNotifications){
+      LocalNotifications.addListener('localNotificationActionPerformed',action=>{
+        const uid=action.notification?.extra?.chatUid;
+        if(uid)openChat(uid,action.notification?.extra?.chatName||'',action.notification?.extra?.chatPic||'');
+      });
+    }
+  }catch(e){console.error('initPushNotifications',e);}
+}
+
+/* ═══ ADMOB (Capacitor) ═══
+   Shows a banner ONLY after the person is logged into the app (never on
+   the terms/login/signup screens, so it can't cover those buttons), and
+   reserves space above the bottom nav bar so the ad sits below it instead
+   of covering any app content.
+   Replace the ad unit IDs below with your own from the AdMob console
+   before publishing — the ones here are Google's public TEST IDs. */
+let admobReady=false,msgSentSinceAd=0,admobInitStarted=false;
+function setAdGap(px){
+  const gap=px+'px';
+  const app=document.getElementById('app');if(app)app.style.paddingBottom=gap;
+  const cw=document.getElementById('chatWin');if(cw)cw.style.paddingBottom=gap;
+  const pab=document.querySelector('.ps-action-bar');if(pab)pab.style.marginBottom=gap;
+}
+async function initAdMob(){
+  if(admobInitStarted)return;
+  admobInitStarted=true;
+  try{
+    if(!window.Capacitor?.isNativePlatform?.())return;
+    const {AdMob}=window.Capacitor.Plugins;
+    if(!AdMob)return;
+    await AdMob.initialize({initializeForTesting:false});
+    // reserve a sensible default gap immediately, then correct it once we
+    // know the real banner height. Applied to every fixed full-screen
+    // overlay (chat window, profile sheet) as well as #app, so the native
+    // banner — which floats outside the webview — never covers the message
+    // send button or other bottom controls.
+    setAdGap(50);
+    AdMob.addListener('bannerAdSizeChanged',(info)=>{
+      setAdGap(info?.height||50);
+    });
+    await AdMob.showBanner({
+      adId:'ca-app-pub-3940256099942544/6300978111', // TEST banner ID — replace with your real unit
+      adSize:'ADAPTIVE_BANNER',
+      position:'BOTTOM_CENTER',
+      margin:0
+    });
+    admobReady=true;
+  }catch(e){console.error('initAdMob',e);}
+}
+async function maybeShowInterstitial(){
+  if(!admobReady)return;
+  msgSentSinceAd++;
+  if(msgSentSinceAd<8)return;
+  msgSentSinceAd=0;
+  try{
+    const {AdMob}=window.Capacitor.Plugins;
+    await AdMob.prepareInterstitial({adId:'ca-app-pub-3940256099942544/1033173712'}); // TEST interstitial ID — replace with your real unit
+    await AdMob.showInterstitial();
+  }catch(e){}
+}
+
+/* ═══ ADMOB REWARDED — gate on opening a chat ═══
+   The user must watch a rewarded video before a conversation opens.
+   The next ad is preloaded in the background as soon as one finishes,
+   so the wait is only on the very first chat after the app launches.
+   If the native AdMob plugin isn't available (e.g. testing in a browser)
+   or no ad fills, the gate opens the chat anyway rather than blocking
+   the person from using the app. */
+const REWARDED_AD_ID='ca-app-pub-3940256099942544/5224354917'; // TEST rewarded ID — replace with your real unit
+let rewardedReady=false,rewardedListenerAttached=false;
+
+async function prepareRewarded(){
+  try{
+    if(!window.Capacitor?.isNativePlatform?.())return;
+    const {AdMob}=window.Capacitor.Plugins;
+    if(!AdMob)return;
+    if(!rewardedListenerAttached){
+      rewardedListenerAttached=true;
+      AdMob.addListener('onRewardedVideoAdReward',()=>{ /* granted flag is read at show-time via local var below */ });
+    }
+    await AdMob.prepareRewardVideoAd({adId:REWARDED_AD_ID});
+    rewardedReady=true;
+  }catch(e){rewardedReady=false;}
+}
+
+async function showRewardedGate(onGranted){
+  // Web / no native AdMob → just proceed
+  if(!window.Capacitor?.isNativePlatform?.()){onGranted();return;}
+  const {AdMob}=window.Capacitor.Plugins;
+  if(!AdMob||!rewardedReady){onGranted();prepareRewarded();return;}
+
+  let earned=false;
+  const sub=AdMob.addListener('onRewardedVideoAdReward',()=>{earned=true;});
+  try{
+    await AdMob.showRewardVideoAd();
+  }catch(e){
+    // ad failed to show (no fill, network, etc) — don't block the user
+    earned=true;
+  }
+  try{sub.remove();}catch(e){}
+  rewardedReady=false;
+  prepareRewarded(); // preload the next one right away
+  onGranted();
+  if(!earned)st('Opening chat…');
+}
+
+prepareRewarded();
+
+/* ═══ HELPERS ═══ */
+window.openOv=id=>{
+  document.getElementById(id).classList.add('on');
+  pushUiState();
+};
+window.closeOv=id=>{
+  document.getElementById(id).classList.remove('on');
+  backUi();
+};
+document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)closeOv(o.id);}));
+function calcAge(d){if(!d)return 0;return Math.abs(new Date(Date.now()-new Date(d).getTime()).getUTCFullYear()-1970);}
+function timeAgo(d){if(!d)return '';const h=Math.floor((new Date()-d)/3600000);if(h<1)return 'now';if(h<24)return h+'h';return Math.floor(h/24)+'d';}
+function esc(t){return t?String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):''}
+// normalizes a user's `photos` field into a consistent array of
+// {url, status} objects, handling both the current per-photo-status
+// format and any legacy plain-string-array data
+function normalizePhotoList(u){
+  if(!u)return[];
+  const arr=u.photos?.length?u.photos:(u.pic?[u.pic]:[]);
+  return arr.map(p=>typeof p==='string'?{url:p,status:'approved'}:p).filter(p=>p&&p.url);
+}
+// a user's photo is only shown to OTHER members once an admin has
+// approved THAT SPECIFIC photo — approval is never all-or-nothing
+function approvedPhotos(u){return normalizePhotoList(u).filter(p=>p.status==='approved').map(p=>p.url);}
+function approvedPic(u){return approvedPhotos(u)[0]||'';}
+// Compresses an image file down to WebP, iteratively lowering quality
+// (and, if that's not enough, dimensions too) until the result fits
+// under targetKB — while keeping it large enough to look sharp in the
+// app's photo grid / full-screen profile viewer.
+function loadImageFromFile(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>resolve(img);
+      img.onerror=()=>reject(new Error('That file is not a valid image'));
+      img.src=e.target.result;
+    };
+    reader.onerror=()=>reject(new Error('Could not read that file'));
+    reader.readAsDataURL(file);
+  });
+}
+function canvasToBlob(canvas,type,q){
+  return new Promise(resolve=>canvas.toBlob(resolve,type,q));
+}
+async function compressImage(file,{startMaxDim=1000,minMaxDim=480,targetKB=250,minQuality=0.4}={}){
+  const img=await loadImageFromFile(file);
+  let maxDim=startMaxDim,bestBlob=null;
+  while(maxDim>=minMaxDim){
+    let w=img.width,h=img.height;
+    if(w>=h){ if(w>maxDim){h=Math.round(h*maxDim/w);w=maxDim;} }
+    else{ if(h>maxDim){w=Math.round(w*maxDim/h);h=maxDim;} }
+    const canvas=document.createElement('canvas');
+    canvas.width=w;canvas.height=h;
+    canvas.getContext('2d').drawImage(img,0,0,w,h);
+    let q=0.85;
+    while(q>=minQuality){
+      const blob=await canvasToBlob(canvas,'image/webp',q);
+      if(blob){
+        bestBlob=blob;
+        if(blob.size/1024<=targetKB)return blob;
+      }
+      q-=0.1;
+    }
+    // still too large even at minimum quality — shrink dimensions and retry
+    maxDim=Math.round(maxDim*0.75);
+  }
+  // best effort: return the smallest version we managed, even if it's
+  // still slightly over target (extremely detailed source photo)
+  return bestBlob;
+}
+// Uploads a compressed photo to Firebase Cloud Storage (instead of
+// storing it inline in Firestore) and returns its public download URL.
+async function uploadPhotoToStorage(blob,uid){
+  const filename=`${Date.now()}_${Math.random().toString(36).slice(2,8)}.webp`;
+  const path=`users/${uid}/photos/${filename}`;
+  const ref=storage.ref(path);
+  await ref.put(blob,{contentType:'image/webp'});
+  const url=await ref.getDownloadURL();
+  return {url,path};
+}
+async function deleteUserPhotoFiles(photosArr){
+  if(!photosArr||!photosArr.length)return;
+  await Promise.all(photosArr.filter(p=>p&&p.path).map(p=>storage.ref(p.path).delete().catch(()=>{})));
+}
+window.st=(msg,ms=2600)=>{const t=document.getElementById('toastEl');t.textContent=msg;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),ms);};
+
+/* fire an interstitial check whenever a message is sent (wrap original sendMsg) */
+const _origSend=window.sendMsg;
+window.sendMsg=async function(){await _origSend();maybeShowInterstitial();};
+</script>
+</body>
+</html>
